@@ -1,0 +1,245 @@
+<!-- Code from d3-graph-gallery.com -->
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<script src="https://d3js.org/d3.v4.js"></script>
+<script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+<div id="floor_is_lava"></div>
+
+<style>
+    .node:hover {
+        stroke-width: 7px !important;
+        opacity: 1 !important;
+        stroke: #0033cc !important;
+    }
+</style>
+
+
+<script>
+    var width = 2000
+    var height = 1000
+    const horizontal_width = width / 2
+    const vertical_height = height / 2
+
+    var svg = d3.select("#floor_is_lava")
+        .append("svg")
+        .attr("width", width)
+        .attr("height", height)
+
+    d3.csv("lava.csv", function (data) {
+
+        data = data.filter(function (d) {
+            return d.value > 0
+        })
+
+        var color = d3.scaleOrdinal()
+            .domain(["Lava", "Leads to Lava", "Not Lava"])
+            .range([
+                '#f44336',
+                '#ffc107',
+                '#4caf50',
+            ]);
+
+        var border_color = d3.scaleOrdinal()
+            .domain(["Lava", "Leads to Lava", "Not Lava"])
+            .range([
+                '#e91e63',
+                '#ff9800',
+                '#009688'
+            ]);
+
+        const COL1 = -8;
+        const COL2 = -6;
+        const COL3 = -4;
+        const COL4 = -2;
+        const COL5 = 0;
+        const COL6 = 2;
+        const COL7 = 4;
+        const COL8 = 6;
+        const COL9 = 8;
+
+        const xCenter = {
+            UB: COL2,
+            BUILD: COL9,
+            C: COL1,
+            CPP: COL5,
+            MACRO: COL2,
+            MMM: COL1,
+            OOP: COL5,
+            OUT: COL3,
+            CASTS: COL3,
+            STL: COL8,
+            THR: COL8,
+            TMP: COL8,
+            TOOLS: COL9,
+            PTR: COL1,
+            PASS: COL3,
+            CTP: COL7,
+            SMART: COL7,
+            CONTAIN: COL7
+        };
+
+        const ROW1 = -5;
+        const ROW2 = 0;
+        const ROW3 = 5;
+
+        const yCenter = {
+            UB: ROW2,
+            BUILD: ROW3,
+            C: ROW1,
+            CPP: ROW1,
+            CASTS: ROW2,
+            MACRO: ROW1,
+            MMM: ROW3,
+            OOP: ROW3,
+            OUT: ROW1,
+            STL: ROW2,
+            THR: ROW3,
+            TMP: ROW1,
+            TOOLS: ROW2,
+            PTR: ROW2,
+            PASS: ROW3,
+            CTP: ROW1,
+            SMART: ROW2,
+            CONTAIN: ROW3
+        };
+
+        var xLevelCenter = {
+            BEGINNER: 500,
+            INTERMEDIATE: 1200,
+            ADVANCED: 1700,
+        }
+
+        var size = d3.scaleLinear()
+            .domain([40, 100])
+            .range([1, 60])
+
+        var stroke_width = d3.scaleLinear()
+            .domain([0, 100])
+            .range([1, 20])
+
+        var Tooltip = d3.select("#floor_is_lava")
+            .append("div")
+            .style("opacity", 0)
+            .attr("class", "tooltip")
+            .style("background-color", "white")
+            .style("border", "solid")
+            .style("border-width", "2px")
+            .style("border-radius", "5px")
+            .style("padding", "5px")
+
+        var mouseover = function (d) {
+            Tooltip
+                .style("opacity", 1)
+        }
+
+        var mousemove = function (d) {
+            Tooltip
+                .html('<u>' + d.key + '</u>' + "<br>" + d.category + "(" + d.level + ") : " + d.value)
+                .style("left", (d3.mouse(this)[0] + 20) + "px")
+                .style("top", (d3.mouse(this)[1]) + "px")
+        }
+
+        var mouseleave = function (d) {
+            Tooltip
+                .style("opacity", 0)
+        }
+
+        var g = svg.append("g")
+            .selectAll("circle")
+            .data(data)
+            .enter();
+
+        var node = g.append("circle")
+            .attr("class", "node")
+            .attr("r", function (d) {
+                return size(d.value)
+            })
+            .attr("cx", width / 2)
+            .attr("cy", height / 2)
+            .style("fill", function (d) {
+                return color(d.region)
+            })
+            .style("fill-opacity", 0.8)
+            .attr("stroke", function (d) {
+                return border_color(d.region)
+            })
+            .style("stroke-width", function (d) {
+                return stroke_width(d.wat)
+            })
+            .on("mouseover", mouseover)
+            .on("mousemove", mousemove)
+            .on("mouseleave", mouseleave)
+            .call(d3.drag()
+                .on("start", dragstarted)
+                .on("drag", dragged)
+                .on("end", dragended));
+
+        var node_label = g.append("text")
+            .text(function (d) {
+                return d.category;
+            })
+            .attr('text-anchor', "middle")
+            .attr('pointer-events', "none")
+            .attr('font-family', "monospace")
+            .attr('font-size', function (d) {
+                return size(d.value) * 0.5;
+            });
+
+        var level_simulation = true;
+
+        var simulation = d3.forceSimulation()
+            .force('x', d3.forceX().x(function (d) {
+                return level_simulation ?
+                    xLevelCenter[d.level] + (xCenter[d.category] * 15) :
+                    horizontal_width + (xCenter[d.category] * 100);
+            }))
+            .force('y', d3.forceY().y(function (d) {
+                return level_simulation ?
+                    vertical_height + (yCenter[d.category] * 50) :
+                    vertical_height + (yCenter[d.category] * 50);
+            }))
+            .force("charge", d3.forceManyBody().strength(.1))
+            .force('collide', d3.forceCollide().strength(1).radius(function (d) {
+                return ((stroke_width(d.wat) / 2) + size(d.value));
+            }).iterations(1))
+
+        simulation
+            .nodes(data)
+            .on("tick", function (d) {
+                node
+                    .attr("cx", function (d) {
+                        return d.x;
+                    })
+                    .attr("cy", function (d) {
+                        return d.y;
+                    });
+                node_label
+                    .attr("x", function (d) {
+                        return d.x;
+                    })
+                    .attr("y", function (d) {
+                        return d.y + 3;
+                    });
+            });
+
+        function dragstarted(d) {
+            if (!d3.event.active) simulation.alphaTarget(.03).restart();
+            d.fx = d.x;
+            d.fy = d.y;
+        }
+
+        function dragged(d) {
+            d.fx = d3.event.x;
+            d.fy = d3.event.y;
+        }
+
+        function dragended(d) {
+            if (!d3.event.active) simulation.alphaTarget(.03);
+            d.fx = null;
+            d.fy = null;
+        }
+
+    })
+
+</script>
