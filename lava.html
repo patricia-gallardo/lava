@@ -26,6 +26,7 @@
         .attr("width", width)
         .attr("height", height)
 
+    // https://raw.githubusercontent.com/patricia-gallardo/lava/main/lava.csv
     d3.csv("lava.csv", function (data) {
 
         data = data.filter(function (d) {
