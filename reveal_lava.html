@@ -41,10 +41,96 @@
 					<div id="floor_is_lava"></div>
 
 					<script>
-						var width = 1280
-						var height = 720
+						const width = 1280
+						const height = 720
 						const horizontal_width = width / 2
 						const vertical_height = height / 2
+
+						const color = d3.scaleOrdinal()
+								.domain(["Lava", "Leads to Lava", "Not Lava"])
+								.range([
+									'#f44336',
+									'#ffc107',
+									'#4caf50',
+								]);
+
+						const border_color = d3.scaleOrdinal()
+								.domain(["Lava", "Leads to Lava", "Not Lava"])
+								.range([
+									'#e91e63',
+									'#ff9800',
+									'#009688'
+								]);
+
+						const COL1 = -8;
+						const COL2 = -6;
+						const COL3 = -4;
+						const COL4 = -2;
+						const COL5 = 0;
+						const COL6 = 2;
+						const COL7 = 4;
+						const COL8 = 6;
+						const COL9 = 8;
+
+						const xCenter = {
+							UB: COL2,
+							BUILD: COL9,
+							C: COL1,
+							CPP: COL5,
+							MACRO: COL2,
+							MMM: COL1,
+							OOP: COL5,
+							OUT: COL3,
+							CASTS: COL3,
+							STL: COL8,
+							THR: COL8,
+							TMP: COL8,
+							TOOLS: COL9,
+							PTR: COL1,
+							PASS: COL3,
+							CTP: COL7,
+							SMART: COL7,
+							CONTAIN: COL7
+						};
+
+						const ROW1 = -5;
+						const ROW2 = 0;
+						const ROW3 = 5;
+
+						const yCenter = {
+							UB: ROW2,
+							BUILD: ROW3,
+							C: ROW1,
+							CPP: ROW1,
+							CASTS: ROW2,
+							MACRO: ROW1,
+							MMM: ROW3,
+							OOP: ROW3,
+							OUT: ROW1,
+							STL: ROW2,
+							THR: ROW3,
+							TMP: ROW1,
+							TOOLS: ROW2,
+							PTR: ROW2,
+							PASS: ROW3,
+							CTP: ROW1,
+							SMART: ROW2,
+							CONTAIN: ROW3
+						};
+
+						const xLevelCenter = {
+							BEGINNER: (width / 6),
+							INTERMEDIATE: (width / 6) * 3,
+							ADVANCED: (width / 6) * 5,
+						}
+
+						const size = d3.scaleLinear()
+								.domain([40, 100])
+								.range([1, (width / 30)])
+
+						const stroke_width = d3.scaleLinear()
+								.domain([0, 100])
+								.range([1, (width / 80)])
 
 						var svg = d3.select("#floor_is_lava")
 								.append("svg")
@@ -57,92 +143,6 @@
 							data = data.filter(function (d) {
 								return d.value > 0
 							})
-
-							const color = d3.scaleOrdinal()
-									.domain(["Lava", "Leads to Lava", "Not Lava"])
-									.range([
-										'#f44336',
-										'#ffc107',
-										'#4caf50',
-									]);
-
-							const border_color = d3.scaleOrdinal()
-									.domain(["Lava", "Leads to Lava", "Not Lava"])
-									.range([
-										'#e91e63',
-										'#ff9800',
-										'#009688'
-									]);
-
-							const COL1 = -8;
-							const COL2 = -6;
-							const COL3 = -4;
-							const COL4 = -2;
-							const COL5 = 0;
-							const COL6 = 2;
-							const COL7 = 4;
-							const COL8 = 6;
-							const COL9 = 8;
-
-							const xCenter = {
-								UB: COL2,
-								BUILD: COL9,
-								C: COL1,
-								CPP: COL5,
-								MACRO: COL2,
-								MMM: COL1,
-								OOP: COL5,
-								OUT: COL3,
-								CASTS: COL3,
-								STL: COL8,
-								THR: COL8,
-								TMP: COL8,
-								TOOLS: COL9,
-								PTR: COL1,
-								PASS: COL3,
-								CTP: COL7,
-								SMART: COL7,
-								CONTAIN: COL7
-							};
-
-							const ROW1 = -5;
-							const ROW2 = 0;
-							const ROW3 = 5;
-
-							const yCenter = {
-								UB: ROW2,
-								BUILD: ROW3,
-								C: ROW1,
-								CPP: ROW1,
-								CASTS: ROW2,
-								MACRO: ROW1,
-								MMM: ROW3,
-								OOP: ROW3,
-								OUT: ROW1,
-								STL: ROW2,
-								THR: ROW3,
-								TMP: ROW1,
-								TOOLS: ROW2,
-								PTR: ROW2,
-								PASS: ROW3,
-								CTP: ROW1,
-								SMART: ROW2,
-								CONTAIN: ROW3
-							};
-
-							const xLevelCenter = {
-								BEGINNER: (width / 6),
-								INTERMEDIATE: (width / 6) * 3,
-								ADVANCED: (width / 6) * 5,
-							}
-
-							const size = d3.scaleLinear()
-									.domain([40, 100])
-									.range([1, (width / 30)])
-
-							const stroke_width = d3.scaleLinear()
-									.domain([0, 100])
-									.range([1, (width / 80)])
 
 							const Tooltip = d3.select("#floor_is_lava")
 									.append("div")
