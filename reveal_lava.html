@@ -58,7 +58,7 @@
 								return d.value > 0
 							})
 
-							var color = d3.scaleOrdinal()
+							const color = d3.scaleOrdinal()
 									.domain(["Lava", "Leads to Lava", "Not Lava"])
 									.range([
 										'#f44336',
@@ -66,7 +66,7 @@
 										'#4caf50',
 									]);
 
-							var border_color = d3.scaleOrdinal()
+							const border_color = d3.scaleOrdinal()
 									.domain(["Lava", "Leads to Lava", "Not Lava"])
 									.range([
 										'#e91e63',
@@ -130,21 +130,21 @@
 								CONTAIN: ROW3
 							};
 
-							var xLevelCenter = {
+							const xLevelCenter = {
 								BEGINNER: (width / 6),
 								INTERMEDIATE: (width / 6) * 3,
 								ADVANCED: (width / 6) * 5,
 							}
 
-							var size = d3.scaleLinear()
+							const size = d3.scaleLinear()
 									.domain([40, 100])
 									.range([1, (width / 30)])
 
-							var stroke_width = d3.scaleLinear()
+							const stroke_width = d3.scaleLinear()
 									.domain([0, 100])
 									.range([1, (width / 80)])
 
-							var Tooltip = d3.select("#floor_is_lava")
+							const Tooltip = d3.select("#floor_is_lava")
 									.append("div")
 									.style("opacity", 0)
 									.attr("class", "tooltip")
@@ -154,29 +154,29 @@
 									.style("border-radius", "5px")
 									.style("padding", "5px")
 
-							var mouseover = function (d) {
+							const mouseover = function (d) {
 								Tooltip
 										.style("opacity", 1)
 							}
 
-							var mousemove = function (d) {
+							const mousemove = function (d) {
 								Tooltip
 										.html('<u>' + d.key + '</u>' + "<br>" + d.category + "(" + d.level + ") : " + d.value)
 										.style("left", (d3.mouse(this)[0] + 20) + "px")
 										.style("top", (d3.mouse(this)[1]) + "px")
 							}
 
-							var mouseleave = function (d) {
+							const mouseleave = function (d) {
 								Tooltip
 										.style("opacity", 0)
 							}
 
-							var g = svg.append("g")
+							const g = svg.append("g")
 									.selectAll("circle")
 									.data(data)
 									.enter();
 
-							var node = g.append("circle")
+							const node = g.append("circle")
 									.attr("class", "node")
 									.attr("r", function (d) {
 										return size(d.value)
@@ -201,7 +201,7 @@
 											.on("drag", dragged)
 											.on("end", dragended));
 
-							var node_label = g.append("text")
+							const node_label = g.append("text")
 									.text(function (d) {
 										return d.category;
 									})
@@ -212,9 +212,9 @@
 										return size(d.value) * 0.5;
 									});
 
-							var level_simulation = true;
+							const level_simulation = true;
 
-							var simulation = d3.forceSimulation()
+							const simulation = d3.forceSimulation()
 									.force('x', d3.forceX().x(function (d) {
 										return level_simulation ?
 												xLevelCenter[d.level] + (xCenter[d.category] * (width / 130)) :
