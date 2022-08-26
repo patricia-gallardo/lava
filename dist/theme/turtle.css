@@ -365,3 +365,12 @@ section.has-light-background, section.has-light-background h1, section.has-light
     background-color: var(--r-background-color);
   }
 }
+
+/*********************************************
+ * LAVA
+ *********************************************/
+.node:hover {
+  stroke-width: 7px !important;
+  opacity: 1 !important;
+  stroke: #0033cc !important;
+}
