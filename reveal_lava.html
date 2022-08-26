@@ -208,6 +208,9 @@
 									.text(function (d) {
 										return d.category;
 									})
+									.attr("data-id", function (d) {
+										return "label"+d.key
+									})
 									.attr('text-anchor', "middle")
 									.attr('pointer-events', "none")
 									.attr('font-family', "monospace")
@@ -271,6 +274,154 @@
 
 						})
 
+					</script>
+				</section>
+
+				<section data-auto-animate data-auto-animate-easing="cubic-bezier(0.770, 0.000, 0.175, 1.000)">
+					<div id="floor_is_lava3"></div>
+
+					<script>
+						var svg3 = d3.select("#floor_is_lava3")
+								.append("svg")
+								.attr("width", width)
+								.attr("height", height)
+
+						// Locally lava.csv
+						d3.csv("https://raw.githubusercontent.com/patricia-gallardo/lava/main/lava.csv", function (data) {
+
+							data = data.filter(function (d) {
+								return d.value > 0
+							})
+
+							const Tooltip = d3.select("#floor_is_lava2")
+									.append("div")
+									.style("opacity", 0)
+									.attr("class", "tooltip")
+									.style("background-color", "white")
+									.style("border", "solid")
+									.style("border-width", "2px")
+									.style("border-radius", "5px")
+									.style("padding", "5px")
+
+							const mouseover = function (d) {
+								Tooltip
+										.style("opacity", 1)
+							}
+
+							const mousemove = function (d) {
+								Tooltip
+										.html('<u>' + d.key + '</u>' + "<br>" + d.category + "(" + d.level + ") : " + d.value)
+										.style("left", (d3.mouse(this)[0] + 20) + "px")
+										.style("top", (d3.mouse(this)[1]) + "px")
+							}
+
+							const mouseleave = function (d) {
+								Tooltip
+										.style("opacity", 0)
+							}
+
+							const g = svg3.append("g")
+									.selectAll("circle")
+									.data(data)
+									.enter();
+
+							const node = g.append("circle")
+									.attr("class", "node")
+									.attr("data-id", function (d) {
+										return d.key
+									})
+									.attr("r", function (d) {
+										return size(d.value)
+									})
+									.attr("cx", width / 2)
+									.attr("cy", height / 2)
+									.style("fill", function (d) {
+										return color(d.region)
+									})
+									.style("fill-opacity", 0.8)
+									.attr("stroke", function (d) {
+										return border_color(d.region)
+									})
+									.style("stroke-width", function (d) {
+										return stroke_width(d.wat)
+									})
+									.on("mouseover", mouseover)
+									.on("mousemove", mousemove)
+									.on("mouseleave", mouseleave)
+									.call(d3.drag()
+											.on("start", dragstarted)
+											.on("drag", dragged)
+											.on("end", dragended));
+
+							const node_label = g.append("text")
+									.text(function (d) {
+										return d.category;
+									})
+									.attr("data-id", function (d) {
+										return "label"+d.key
+									})
+									.attr('text-anchor', "middle")
+									.attr('pointer-events', "none")
+									.attr('font-family', "monospace")
+									.attr('font-size', function (d) {
+										return size(d.value) * 0.5;
+									});
+
+							const level_simulation = true;
+
+							const simulation = d3.forceSimulation()
+									.force('x', d3.forceX().x(function (d) {
+										return level_simulation ?
+												xLevelCenter[d.level] + (xCenter[d.category] * (width / 130)) :
+												horizontal_width + (xCenter[d.category] * (width / 20));
+									}))
+									.force('y', d3.forceY().y(function (d) {
+										return level_simulation ?
+												vertical_height + (yCenter[d.category] * (width / 40)) :
+												vertical_height + (yCenter[d.category] * (width / 40));
+									}))
+									.force("charge", d3.forceManyBody().strength(.1))
+									.force('collide', d3.forceCollide().strength(1).radius(function (d) {
+										return ((stroke_width(d.wat) / 2) + size(d.value));
+									}).iterations(1))
+
+							simulation
+									.nodes(data)
+									.on("tick", function (d) {
+										node
+												.attr("cx", function (d) {
+													return d.x;
+												})
+												.attr("cy", function (d) {
+													return d.y;
+												});
+										node_label
+												.attr("x", function (d) {
+													return d.x;
+												})
+												.attr("y", function (d) {
+													return d.y + 3;
+												});
+									});
+
+							function dragstarted(d) {
+								if (!d3.event.active) simulation.alphaTarget(.03).restart();
+								d.fx = d.x;
+								d.fy = d.y;
+							}
+
+							function dragged(d) {
+								d.fx = d3.event.x;
+								d.fy = d3.event.y;
+							}
+
+							function dragended(d) {
+								if (!d3.event.active) simulation.alphaTarget(.03);
+								d.fx = null;
+								d.fy = null;
+							}
+
+						})
 					</script>
 				</section>
 
@@ -353,6 +504,9 @@
 							const node_label = g.append("text")
 									.text(function (d) {
 										return d.category;
+									})
+									.attr("data-id", function (d) {
+										return "label"+d.key
 									})
 									.attr('text-anchor', "middle")
 									.attr('pointer-events', "none")
