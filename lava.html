@@ -16,8 +16,8 @@
 
 
 <script>
-    var width = 2000
-    var height = 1000
+    var width = 1280
+    var height = 720
     const horizontal_width = width / 2
     const vertical_height = height / 2
 
@@ -106,18 +106,18 @@
         };
 
         var xLevelCenter = {
-            BEGINNER: 500,
-            INTERMEDIATE: 1200,
-            ADVANCED: 1700,
+            BEGINNER: (width / 6),
+            INTERMEDIATE: (width / 6) * 3,
+            ADVANCED: (width / 6) * 5,
         }
 
         var size = d3.scaleLinear()
             .domain([40, 100])
-            .range([1, 60])
+            .range([1, (width / 30)])
 
         var stroke_width = d3.scaleLinear()
             .domain([0, 100])
-            .range([1, 20])
+            .range([1, (width / 80)])
 
         var Tooltip = d3.select("#floor_is_lava")
             .append("div")
@@ -192,13 +192,13 @@
         var simulation = d3.forceSimulation()
             .force('x', d3.forceX().x(function (d) {
                 return level_simulation ?
-                    xLevelCenter[d.level] + (xCenter[d.category] * 15) :
-                    horizontal_width + (xCenter[d.category] * 100);
+                    xLevelCenter[d.level] + (xCenter[d.category] * (width / 130)) :
+                    horizontal_width + (xCenter[d.category] * (width / 20));
             }))
             .force('y', d3.forceY().y(function (d) {
                 return level_simulation ?
-                    vertical_height + (yCenter[d.category] * 50) :
-                    vertical_height + (yCenter[d.category] * 50);
+                    vertical_height + (yCenter[d.category] * (width / 40)) :
+                    vertical_height + (yCenter[d.category] * (width / 40));
             }))
             .force("charge", d3.forceManyBody().strength(.1))
             .force('collide', d3.forceCollide().strength(1).radius(function (d) {
