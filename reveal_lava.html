@@ -111,7 +111,7 @@
 
 						const bubble_size = 15;
 
-						var bubble_graph = function (data,id_tag,use_color,align) {
+						var bubble_graph = function (data,id_tag,use_color,halign,valign) {
 							var svg_empty = d3.select(id_tag)
 									.append("svg")
 									.attr("width", width)
@@ -145,10 +145,10 @@
 
 							const simulation = d3.forceSimulation()
 									.force('x', d3.forceX().x(function (d) {
-										return align === "level" ? lvl_sort[d.level] : width / 2;
+										return halign === "center" ? width / 2 : lvl_sort[d.level];
 									}))
 									.force('y', d3.forceY().y(function (d) {
-										return height / 2;
+										return valign === "center" ? height / 2 : util_sort[d.utility];
 									}))
 									.force("charge", d3.forceManyBody().strength(.1))
 									.force('collide', d3.forceCollide().strength(1).radius(function (d) {
@@ -193,7 +193,7 @@
 								return d.value > 0;
 							})
 
-							bubble_graph(data,"#floor_is_lava_empty", false, "center")
+							bubble_graph(data,"#floor_is_lava_empty", false, "center", "center")
 						})
 
 					</script>
@@ -512,7 +512,7 @@
 									return d.level == "BEGINNER";
 								})
 
-								bubble_graph(data,"#floor_is_lava_beginner", true, "level")
+								bubble_graph(data,"#floor_is_lava_beginner", true, "level", "center")
 							})
 						</script>
 					</section>
@@ -654,7 +654,7 @@
 									return d.level == "INTERMEDIATE";
 								})
 
-								bubble_graph(data,"#floor_is_lava_intermediate", true, "level")
+								bubble_graph(data,"#floor_is_lava_intermediate", true, "level", "center")
 							})
 						</script>
 					</section>
@@ -783,7 +783,7 @@
 									return d.level == "ADVANCED";
 								})
 
-								bubble_graph(data,"#floor_is_lava_advanced", true, "level")
+								bubble_graph(data,"#floor_is_lava_advanced", true, "level", "center")
 							})
 						</script>
 					</section>
