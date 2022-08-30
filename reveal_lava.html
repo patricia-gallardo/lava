@@ -485,6 +485,117 @@
 				</section>
 
 				<section data-auto-animate data-auto-animate-easing="cubic-bezier(0.770, 0.000, 0.175, 1.000)">
+					<h3>What is intermediate?</h3>
+					<div id="floor_is_lava_intermediate"></div>
+
+					<script>
+						var svg_intermediate = d3.select("#floor_is_lava_intermediate")
+								.append("svg")
+								.attr("width", width)
+								.attr("height", height)
+
+						// Locally lava.csv
+						d3.csv("lava.csv", function (data) {
+
+							data = data.filter(function (d) {
+								return d.level == "INTERMEDIATE";
+							})
+
+							const g = svg_intermediate.append("g")
+									.selectAll("ellipse")
+									.data(data)
+									.enter();
+
+							const node = g.append("ellipse")
+									.attr("class", "node")
+									.attr("data-id", function (d) {
+										return d.key
+									})
+									.attr("rx", bubble_size * 7)
+									.attr("ry", bubble_size * 1.5)
+									.attr("cx", width / 2)
+									.attr("cy", height / 2)
+									.style("fill", function (d) {
+										return color(d.region)
+									})
+									.style("fill-opacity", 0.8)
+									.attr("stroke", function (d) {
+										return border_color(d.region)
+									})
+									.style("stroke-width", 1)
+									.call(d3.drag()
+											.on("start", dragstarted)
+											.on("drag", dragged)
+											.on("end", dragended));
+
+							const node_label = g.append("text")
+									.text(function (d) {
+										return d.key;
+									})
+									.attr("data-id", function (d) {
+										return "label"+d.key
+									})
+									.attr('text-anchor', "middle")
+									.attr('pointer-events', "none")
+									.attr('font-family', "monospace")
+									.attr('font-size', function (d) {
+										return bubble_size * 0.9;
+									});
+
+							const simulation = d3.forceSimulation()
+									.force('x', d3.forceX().x(function (d) {
+										return horizontal_sort[d.region];
+									}))
+									.force('y', d3.forceY().y(function (d) {
+										return height / 2;
+									}))
+									.force("charge", d3.forceManyBody().strength(.1))
+									.force('collide', d3.forceCollide().strength(1).radius(function (d) {
+										return bubble_size * 3;
+									}).iterations(1))
+
+							simulation
+									.nodes(data)
+									.on("tick", function (d) {
+										node
+												.attr("cx", function (d) {
+													return d.x;
+												})
+												.attr("cy", function (d) {
+													return d.y;
+												});
+										node_label
+												.attr("x", function (d) {
+													return d.x;
+												})
+												.attr("y", function (d) {
+													return d.y + 3;
+												});
+									});
+
+							function dragstarted(d) {
+								if (!d3.event.active) simulation.alphaTarget(.03).restart();
+								d.fx = d.x;
+								d.fy = d.y;
+							}
+
+							function dragged(d) {
+								d.fx = d3.event.x;
+								d.fy = d3.event.y;
+							}
+
+							function dragended(d) {
+								if (!d3.event.active) simulation.alphaTarget(.03);
+								d.fx = null;
+								d.fy = null;
+							}
+
+						})
+
+					</script>
+				</section>
+
+				<section data-auto-animate data-auto-animate-easing="cubic-bezier(0.770, 0.000, 0.175, 1.000)">
 					<div id="floor_is_lava"></div>
 
 					<script>
