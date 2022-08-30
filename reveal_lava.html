@@ -587,8 +587,8 @@
 
 						<script>
 
-							var tabulate = function (data,columns) {
-								var container = d3.select("#floor_is_lava_beginner_rect").append('div').attr('class', 'flex-container')
+							var tabulate = function (data,id_tag) {
+								var container = d3.select(id_tag).append('div').attr('class', 'flex-container')
 
 								var cells = container.selectAll('p')
 										.data(data)
@@ -606,11 +606,11 @@
 									return d.level == "BEGINNER";
 								})
 
-								var columns = ["region","utility","key","category","value","wat","level"];
-								tabulate(data,columns)
+								tabulate(data,"#floor_is_lava_beginner_rect")
 							})
 
 						</script>
+					</section>
 				</section>
 
 				<section>
@@ -792,6 +792,22 @@
 									d.fy = null;
 								}
 
+							})
+
+						</script>
+					</section>
+					<section data-auto-animate data-auto-animate-easing="cubic-bezier(0.770, 0.000, 0.175, 1.000)">
+						<h3>What is intermediate rect?</h3>
+						<div id="floor_is_lava_intermediate_rect"></div>
+
+						<script>
+							d3.csv("lava.csv", function (data) {
+
+								data = data.filter(function (d) {
+									return d.level == "INTERMEDIATE";
+								})
+
+								tabulate(data,"#floor_is_lava_intermediate_rect")
 							})
 
 						</script>
@@ -978,6 +994,22 @@
 									d.fy = null;
 								}
 
+							})
+
+						</script>
+					</section>
+					<section data-auto-animate data-auto-animate-easing="cubic-bezier(0.770, 0.000, 0.175, 1.000)">
+						<h3>What is advanced rect?</h3>
+						<div id="floor_is_lava_advanced_rect"></div>
+
+						<script>
+							d3.csv("lava.csv", function (data) {
+
+								data = data.filter(function (d) {
+									return d.level == "ADVANCED";
+								})
+
+								tabulate(data,"#floor_is_lava_advanced_rect")
 							})
 
 						</script>
