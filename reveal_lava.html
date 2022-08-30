@@ -95,23 +95,23 @@
 						const bubble_size = 15;
 
 						// Locally lava.csv
-						d3.csv("https://raw.githubusercontent.com/patricia-gallardo/lava/main/lava.csv", function (data) {
+						d3.csv("lava.csv", function (data) {
 
 							data = data.filter(function (d) {
 								return d.value > 0
 							})
 
 							const g = svg_empty.append("g")
-									.selectAll("circle")
+									.selectAll("ellipse")
 									.data(data)
 									.enter();
 
-							const node = g.append("circle")
+							const node = g.append("ellipse")
 									.attr("class", "node")
 									.attr("data-id", function (d) {
 										return d.key
 									})
-									.attr("r", bubble_size)
+									.attr("rx", bubble_size)
 									.attr("cx", width / 2)
 									.attr("cy", height / 2)
 									.style("fill", "white")
@@ -201,23 +201,23 @@
 						horizontal_sort["Lava"] = (width / 4) * 3;
 
 						// Locally lava.csv
-						d3.csv("https://raw.githubusercontent.com/patricia-gallardo/lava/main/lava.csv", function (data) {
+						d3.csv("lava.csv", function (data) {
 
 							data = data.filter(function (d) {
 								return d.value > 0
 							})
 
 							const g = svg_sorted.append("g")
-									.selectAll("circle")
+									.selectAll("ellipse")
 									.data(data)
 									.enter();
 
-							const node = g.append("circle")
+							const node = g.append("ellipse")
 									.attr("class", "node")
 									.attr("data-id", function (d) {
 										return d.key
 									})
-									.attr("r", bubble_size)
+									.attr("rx", bubble_size)
 									.attr("cx", width / 2)
 									.attr("cy", height / 2)
 									.style("fill", function (d) {
@@ -295,23 +295,23 @@
 						vertical_sort["ADVANCED"] = (height / 2) + 200;
 
 						// Locally lava.csv
-						d3.csv("https://raw.githubusercontent.com/patricia-gallardo/lava/main/lava.csv", function (data) {
+						d3.csv("lava.csv", function (data) {
 
 							data = data.filter(function (d) {
 								return d.value > 0
 							})
 
 							const g = svg_sorted_twice.append("g")
-									.selectAll("circle")
+									.selectAll("ellipse")
 									.data(data)
 									.enter();
 
-							const node = g.append("circle")
+							const node = g.append("ellipse")
 									.attr("class", "node")
 									.attr("data-id", function (d) {
 										return d.key
 									})
-									.attr("r", bubble_size)
+									.attr("rx", bubble_size)
 									.attr("cx", width / 2)
 									.attr("cy", height / 2)
 									.style("fill", function (d) {
@@ -384,23 +384,24 @@
 								.attr("height", height)
 
 						// Locally lava.csv
-						d3.csv("https://raw.githubusercontent.com/patricia-gallardo/lava/main/lava.csv", function (data) {
+						d3.csv("lava.csv", function (data) {
 
 							data = data.filter(function (d) {
 								return d.level == "ADVANCED";
 							})
 
 							const g = svg_advanced.append("g")
-									.selectAll("circle")
+									.selectAll("ellipse")
 									.data(data)
 									.enter();
 
-							const node = g.append("circle")
+							const node = g.append("ellipse")
 									.attr("class", "node")
 									.attr("data-id", function (d) {
 										return d.key
 									})
-									.attr("r", bubble_size * 2)
+									.attr("rx", bubble_size * 7)
+									.attr("ry", bubble_size * 1.5)
 									.attr("cx", width / 2)
 									.attr("cy", height / 2)
 									.style("fill", function (d) {
@@ -418,7 +419,7 @@
 
 							const node_label = g.append("text")
 									.text(function (d) {
-										return d.category;
+										return d.key;
 									})
 									.attr("data-id", function (d) {
 										return "label"+d.key
@@ -427,7 +428,7 @@
 									.attr('pointer-events', "none")
 									.attr('font-family', "monospace")
 									.attr('font-size', function (d) {
-										return bubble_size * 0.8;
+										return bubble_size * 0.9;
 									});
 
 							const simulation = d3.forceSimulation()
@@ -439,7 +440,7 @@
 									}))
 									.force("charge", d3.forceManyBody().strength(.1))
 									.force('collide', d3.forceCollide().strength(1).radius(function (d) {
-										return bubble_size * 2;
+										return bubble_size * 3;
 									}).iterations(1))
 
 							simulation
@@ -563,7 +564,7 @@
 								.attr("height", height)
 
 						// Locally lava.csv
-						d3.csv("https://raw.githubusercontent.com/patricia-gallardo/lava/main/lava.csv", function (data) {
+						d3.csv("lava.csv", function (data) {
 
 							data = data.filter(function (d) {
 								return d.value > 0
@@ -597,16 +598,16 @@
 							}
 
 							const g = svg.append("g")
-									.selectAll("circle")
+									.selectAll("ellipse")
 									.data(data)
 									.enter();
 
-							const node = g.append("circle")
+							const node = g.append("ellipse")
 									.attr("class", "node")
 									.attr("data-id", function (d) {
 										return d.key
 									})
-									.attr("r", function (d) {
+									.attr("rx", function (d) {
 										return size(d.value)
 									})
 									.attr("cx", width / 2)
@@ -712,7 +713,7 @@
 								.attr("height", height)
 
 						// Locally lava.csv
-						d3.csv("https://raw.githubusercontent.com/patricia-gallardo/lava/main/lava.csv", function (data) {
+						d3.csv("lava.csv", function (data) {
 
 							data = data.filter(function (d) {
 								return d.value > 0
@@ -746,16 +747,16 @@
 							}
 
 							const g = svg3.append("g")
-									.selectAll("circle")
+									.selectAll("ellipse")
 									.data(data)
 									.enter();
 
-							const node = g.append("circle")
+							const node = g.append("ellipse")
 									.attr("class", "node")
 									.attr("data-id", function (d) {
 										return d.key
 									})
-									.attr("r", function (d) {
+									.attr("rx", function (d) {
 										return size(d.value)
 									})
 									.attr("cx", width / 2)
@@ -860,7 +861,7 @@
 								.attr("height", height)
 
 						// Locally lava.csv
-						d3.csv("https://raw.githubusercontent.com/patricia-gallardo/lava/main/lava.csv", function (data) {
+						d3.csv("lava.csv", function (data) {
 
 							data = data.filter(function (d) {
 								return d.level === "ADVANCED"
@@ -894,16 +895,16 @@
 							}
 
 							const g = svg2.append("g")
-									.selectAll("circle")
+									.selectAll("ellipse")
 									.data(data)
 									.enter();
 
-							const node = g.append("circle")
+							const node = g.append("ellipse")
 									.attr("class", "node")
 									.attr("data-id", function (d) {
 										return d.key
 									})
-									.attr("r", function (d) {
+									.attr("rx", function (d) {
 										return size(d.value)
 									})
 									.attr("cx", width / 2)
