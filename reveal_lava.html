@@ -70,9 +70,31 @@
 
 				<section>
 					<h2>How can we sort C++ features after these rather vague criteria?</h2>
-					<p class="fragment">Useful</p>
-					<p class="fragment">Mostly Harmless</p>
-					<p class="fragment">Obvious</p>
+					<p class="fragment">Harmlessness</p>
+					<p class="fragment">Utility</p>
+					<p class="fragment">Level</p>
+				</section>
+
+				<section>
+					<h2>Harmlessness</h2>
+					<p class="fragment">Not Lava</p>
+					<p class="fragment">Leads to Lava</p>
+					<p class="fragment">Lava</p>
+				</section>
+
+				<section>
+					<h2>Utility</h2>
+					<p class="fragment">NECESSARY</p>
+					<p class="fragment">USEFUL</p>
+					<p class="fragment">WELL_ROUNDED</p>
+					<p class="fragment">SPECIALIZED</p>
+				</section>
+
+				<section>
+					<h2>Level</h2>
+					<p class="fragment">BEGINNER</p>
+					<p class="fragment">INTERMEDIATE</p>
+					<p class="fragment">ADVANCED</p>
 				</section>
 
 				<section data-auto-animate data-auto-animate-easing="cubic-bezier(0.770, 0.000, 0.175, 1.000)">
@@ -170,7 +192,7 @@
 				</section>
 
 				<section data-auto-animate data-auto-animate-easing="cubic-bezier(0.770, 0.000, 0.175, 1.000)">
-					<h3>Sort on harmlessness</h3>
+					<h3>Use color for harmlessness</h3>
 					<div id="floor_is_lava_sorted"></div>
 
 					<script>
@@ -280,7 +302,7 @@
 				</section>
 
 				<section data-auto-animate data-auto-animate-easing="cubic-bezier(0.770, 0.000, 0.175, 1.000)">
-					<h3>And sort on how advanced</h3>
+					<h3>Rank by level</h3>
 					<div id="floor_is_lava_sorted_twice"></div>
 
 					<script>
@@ -289,10 +311,10 @@
 								.attr("width", width)
 								.attr("height", height)
 
-						var vertical_sort = [];
-						vertical_sort["BEGINNER"] = (height / 2) - 200;
-						vertical_sort["INTERMEDIATE"] = (height / 2);
-						vertical_sort["ADVANCED"] = (height / 2) + 200;
+						var level_sort = [];
+						level_sort["BEGINNER"] = (height / 2) - 200;
+						level_sort["INTERMEDIATE"] = (height / 2);
+						level_sort["ADVANCED"] = (height / 2) + 200;
 
 						// Locally lava.csv
 						d3.csv("lava.csv", function (data) {
@@ -332,7 +354,107 @@
 										return horizontal_sort[d.region];
 									}))
 									.force('y', d3.forceY().y(function (d) {
-										return vertical_sort[d.level];
+										return level_sort[d.level];
+									}))
+									.force("charge", d3.forceManyBody().strength(.1))
+									.force('collide', d3.forceCollide().strength(1).radius(function (d) {
+										return bubble_size;
+									}).iterations(1))
+
+							simulation
+									.nodes(data)
+									.on("tick", function (d) {
+										node
+												.attr("cx", function (d) {
+													return d.x;
+												})
+												.attr("cy", function (d) {
+													return d.y;
+												});
+									});
+
+							function dragstarted(d) {
+								if (!d3.event.active) simulation.alphaTarget(.03).restart();
+								d.fx = d.x;
+								d.fy = d.y;
+							}
+
+							function dragged(d) {
+								d.fx = d3.event.x;
+								d.fy = d3.event.y;
+							}
+
+							function dragended(d) {
+								if (!d3.event.active) simulation.alphaTarget(.03);
+								d.fx = null;
+								d.fy = null;
+							}
+
+						})
+
+					</script>
+				</section>
+
+				<section data-auto-animate data-auto-animate-easing="cubic-bezier(0.770, 0.000, 0.175, 1.000)">
+					<h3>Spread by utility</h3>
+					<div id="floor_is_lava_sorted_thrice"></div>
+
+					<script>
+						var svg_sorted_thrice = d3.select("#floor_is_lava_sorted_thrice")
+								.append("svg")
+								.attr("width", width)
+								.attr("height", height)
+
+						var utility_sort = [];
+						utility_sort["NECESSARY"] = (width / 5);
+						utility_sort["USEFUL"] = (width / 5) * 2;
+						utility_sort["WELL_ROUNDED"] = (width / 5) * 3;
+						utility_sort["SPECIALIZED"] = (width / 5) * 4;
+
+						// Locally lava.csv
+						d3.csv("lava.csv", function (data) {
+
+							data = data.filter(function (d) {
+								return d.value > 0
+							})
+
+							const g = svg_sorted_thrice.append("g")
+									.selectAll("ellipse")
+									.data(data)
+									.enter();
+
+							var advanced_stroke_width = [];
+							advanced_stroke_width["BEGINNER"] = 1;
+							advanced_stroke_width["INTERMEDIATE"] = 2;
+							advanced_stroke_width["ADVANCED"] = 4;
+
+							const node = g.append("ellipse")
+									.attr("class", "node")
+									.attr("data-id", function (d) {
+										return d.key
+									})
+									.attr("rx", bubble_size)
+									.attr("cx", width / 2)
+									.attr("cy", height / 2)
+									.style("fill", function (d) {
+										return color(d.region)
+									})
+									.style("fill-opacity", 0.8)
+									.attr("stroke", function (d) {
+										return border_color(d.region)
+									})
+									.style("stroke-width", 1)
+									.call(d3.drag()
+											.on("start", dragstarted)
+											.on("drag", dragged)
+											.on("end", dragended));
+
+							const simulation = d3.forceSimulation()
+									.force('x', d3.forceX().x(function (d) {
+										return utility_sort[d.utility];
+									}))
+									.force('y', d3.forceY().y(function (d) {
+										return level_sort[d.level];
 									}))
 									.force("charge", d3.forceManyBody().strength(.1))
 									.force('collide', d3.forceCollide().strength(1).radius(function (d) {
