@@ -109,19 +109,13 @@
 						const horizontal_width = width / 2
 						const vertical_height = height / 2
 
-						var svg_empty = d3.select("#floor_is_lava_empty")
-								.append("svg")
-								.attr("width", width)
-								.attr("height", height)
-
 						const bubble_size = 15;
 
-						// Locally lava.csv
-						d3.csv("lava.csv", function (data) {
-
-							data = data.filter(function (d) {
-								return d.value > 0
-							})
+						var bubble_graph = function (data,id_tag) {
+							var svg_empty = d3.select(id_tag)
+									.append("svg")
+									.attr("width", width)
+									.attr("height", height)
 
 							const g = svg_empty.append("g")
 									.selectAll("ellipse")
@@ -186,6 +180,16 @@
 								d.fy = null;
 							}
 
+							return svg_empty;
+						}
+
+						d3.csv("lava.csv", function (data) {
+
+							data = data.filter(function (d) {
+								return d.value > 0;
+							})
+
+							bubble_graph(data,"#floor_is_lava_empty")
 						})
 
 					</script>
