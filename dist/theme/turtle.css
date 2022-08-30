@@ -373,3 +373,23 @@ section.has-light-background, section.has-light-background h1, section.has-light
   opacity: 1 !important;
   stroke: #0033cc !important;
 }
+
+.flex-item {
+  font-size: 15px;
+}
+
+.flex-container {
+  /* We first create a flex layout context */
+  display: flex;
+
+  /* Then we define the flow direction
+     and if we allow the items to wrap
+   * Remember this is the same as:
+   * flex-direction: row;
+   * flex-wrap: wrap;
+   */
+  flex-flow: row wrap;
+
+  /* Then we define how is distributed the remaining space */
+  justify-content: space-around;
+}
