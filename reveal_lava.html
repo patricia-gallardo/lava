@@ -1240,7 +1240,8 @@
 				</section>
 
 				<section data-auto-animate data-auto-animate-easing="cubic-bezier(0.770, 0.000, 0.175, 1.000)">
-					<div id="floor_is_lava"></div>
+					<h3>Atlas for beginners</h3>
+					<div id="atlas_for_beginners"></div>
 
 					<script>
 						const COL1 = -8;
@@ -1313,7 +1314,7 @@
 								.domain([0, 100])
 								.range([1, (width / 80)])
 
-						var svg = d3.select("#floor_is_lava")
+						var svg = d3.select("#atlas_for_beginners")
 								.append("svg")
 								.attr("width", width)
 								.attr("height", height)
@@ -1322,10 +1323,10 @@
 						d3.csv("lava.csv", function (data) {
 
 							data = data.filter(function (d) {
-								return d.value > 0
+								return d.level == "BEGINNER"
 							})
 
-							const Tooltip = d3.select("#floor_is_lava")
+							const Tooltip = d3.select("#atlas_for_beginners")
 									.append("div")
 									.style("opacity", 0)
 									.attr("class", "tooltip")
@@ -1458,6 +1459,7 @@
 					</script>
 				</section>
 
+				<section>
 				<section data-auto-animate data-auto-animate-easing="cubic-bezier(0.770, 0.000, 0.175, 1.000)">
 					<div id="floor_is_lava3"></div>
 
@@ -1605,12 +1607,14 @@
 						})
 					</script>
 				</section>
+				</section>
 
 				<section data-auto-animate data-auto-animate-easing="cubic-bezier(0.770, 0.000, 0.175, 1.000)">
-					<div id="floor_is_lava2"></div>
+					<h3>Atlas for advanced</h3>
+					<div id="atlas_for_advanced"></div>
 
 					<script>
-						var svg2 = d3.select("#floor_is_lava2")
+						var svg_for_advanced = d3.select("#atlas_for_advanced")
 								.append("svg")
 								.attr("width", width)
 								.attr("height", height)
@@ -1622,7 +1626,7 @@
 								return d.level === "ADVANCED"
 							})
 
-							const Tooltip = d3.select("#floor_is_lava2")
+							const Tooltip = d3.select("#atlas_for_advanced")
 									.append("div")
 									.style("opacity", 0)
 									.attr("class", "tooltip")
@@ -1649,7 +1653,7 @@
 										.style("opacity", 0)
 							}
 
-							const g = svg2.append("g")
+							const g = svg_for_advanced.append("g")
 									.selectAll("ellipse")
 									.data(data)
 									.enter();
