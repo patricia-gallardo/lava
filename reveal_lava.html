@@ -143,6 +143,17 @@
 											.on("drag", dragged)
 											.on("end", dragended));
 
+							var lvl_sort = [];
+							lvl_sort["BEGINNER"] = (width / 4);
+							lvl_sort["INTERMEDIATE"] = (width / 4) * 2;
+							lvl_sort["ADVANCED"] = (width / 4) * 3;
+
+							var util_sort = [];
+							util_sort["NECESSARY"] = (height / 5);
+							util_sort["USEFUL"] = (height / 5) * 2;
+							util_sort["WELL_ROUNDED"] = (height / 5) * 3;
+							util_sort["SPECIALIZED"] = (height / 5) * 4;
+
 							const simulation = d3.forceSimulation()
 									.force('x', d3.forceX().x(function (d) {
 										return halign === "center" ? width / 2 : lvl_sort[d.level];
@@ -322,11 +333,7 @@
 
 
 
-						var util_sort = [];
-						util_sort["NECESSARY"] = (height / 5);
-						util_sort["USEFUL"] = (height / 5) * 2;
-						util_sort["WELL_ROUNDED"] = (height / 5) * 3;
-						util_sort["SPECIALIZED"] = (height / 5) * 4;
+
 
 						// Locally lava.csv
 						d3.csv("lava.csv", function (data) {
@@ -360,6 +367,12 @@
 											.on("start", dragstarted)
 											.on("drag", dragged)
 											.on("end", dragended));
+
+							var util_sort = [];
+							util_sort["NECESSARY"] = (height / 5);
+							util_sort["USEFUL"] = (height / 5) * 2;
+							util_sort["WELL_ROUNDED"] = (height / 5) * 3;
+							util_sort["SPECIALIZED"] = (height / 5) * 4;
 
 							const simulation = d3.forceSimulation()
 									.force('x', d3.forceX().x(function (d) {
@@ -413,92 +426,14 @@
 					<div id="floor_is_lava_spread_by_level_beginner"></div>
 
 					<script>
-						var svg_spread_by_level_beginner = d3.select("#floor_is_lava_spread_by_level_beginner")
-								.append("svg")
-								.attr("width", width)
-								.attr("height", height)
-
-						var lvl_sort = [];
-						lvl_sort["BEGINNER"] = (width / 4);
-						lvl_sort["INTERMEDIATE"] = (width / 4) * 2;
-						lvl_sort["ADVANCED"] = (width / 4) * 3;
-
-						// Locally lava.csv
 						d3.csv("lava.csv", function (data) {
 
 							data = data.filter(function (d) {
-								return d.value > 0
+								return d.value > 0;
 							})
 
-							const g = svg_spread_by_level_beginner.append("g")
-									.selectAll("ellipse")
-									.data(data)
-									.enter();
-
-							const node = g.append("ellipse")
-									.attr("class", "node")
-									.attr("data-id", function (d) {
-										return d.key
-									})
-									.attr("rx", bubble_size)
-									.attr("cx", width / 2)
-									.attr("cy", height / 2)
-									.style("fill", function (d) {
-										return color(d.region)
-									})
-									.style("fill-opacity", 0.8)
-									.attr("stroke", function (d) {
-										return border_color(d.region)
-									})
-									.style("stroke-width", 1)
-									.call(d3.drag()
-											.on("start", dragstarted)
-											.on("drag", dragged)
-											.on("end", dragended));
-
-							const simulation = d3.forceSimulation()
-									.force('x', d3.forceX().x(function (d) {
-										return lvl_sort[d.level];
-									}))
-									.force('y', d3.forceY().y(function (d) {
-										return util_sort[d.utility];
-									}))
-									.force("charge", d3.forceManyBody().strength(.1))
-									.force('collide', d3.forceCollide().strength(1).radius(function (d) {
-										return bubble_size;
-									}).iterations(1))
-
-							simulation
-									.nodes(data)
-									.on("tick", function (d) {
-										node
-												.attr("cx", function (d) {
-													return d.x;
-												})
-												.attr("cy", function (d) {
-													return d.y;
-												});
-									});
-
-							function dragstarted(d) {
-								if (!d3.event.active) simulation.alphaTarget(.03).restart();
-								d.fx = d.x;
-								d.fy = d.y;
-							}
-
-							function dragged(d) {
-								d.fx = d3.event.x;
-								d.fy = d3.event.y;
-							}
-
-							function dragended(d) {
-								if (!d3.event.active) simulation.alphaTarget(.03);
-								d.fx = null;
-								d.fy = null;
-							}
-
+							bubble_graph(data,"#floor_is_lava_spread_by_level_beginner", true, "level", "utility")
 						})
-
 					</script>
 				</section>
 					<section data-auto-animate data-auto-animate-easing="cubic-bezier(0.770, 0.000, 0.175, 1.000)">
@@ -554,92 +489,14 @@
 						<div id="floor_is_lava_spread_by_level_intermediate"></div>
 
 						<script>
-							var svg_necessary_and_beginner = d3.select("#floor_is_lava_spread_by_level_intermediate")
-									.append("svg")
-									.attr("width", width)
-									.attr("height", height)
-
-							var lvl_sort = [];
-							lvl_sort["BEGINNER"] = (width / 4);
-							lvl_sort["INTERMEDIATE"] = (width / 4) * 2;
-							lvl_sort["ADVANCED"] = (width / 4) * 3;
-
-							// Locally lava.csv
 							d3.csv("lava.csv", function (data) {
 
 								data = data.filter(function (d) {
-									return d.value > 0
+									return d.value > 0;
 								})
 
-								const g = svg_necessary_and_beginner.append("g")
-										.selectAll("ellipse")
-										.data(data)
-										.enter();
-
-								const node = g.append("ellipse")
-										.attr("class", "node")
-										.attr("data-id", function (d) {
-											return d.key
-										})
-										.attr("rx", bubble_size)
-										.attr("cx", width / 2)
-										.attr("cy", height / 2)
-										.style("fill", function (d) {
-											return color(d.region)
-										})
-										.style("fill-opacity", 0.8)
-										.attr("stroke", function (d) {
-											return border_color(d.region)
-										})
-										.style("stroke-width", 1)
-										.call(d3.drag()
-												.on("start", dragstarted)
-												.on("drag", dragged)
-												.on("end", dragended));
-
-								const simulation = d3.forceSimulation()
-										.force('x', d3.forceX().x(function (d) {
-											return lvl_sort[d.level];
-										}))
-										.force('y', d3.forceY().y(function (d) {
-											return util_sort[d.utility];
-										}))
-										.force("charge", d3.forceManyBody().strength(.1))
-										.force('collide', d3.forceCollide().strength(1).radius(function (d) {
-											return bubble_size;
-										}).iterations(1))
-
-								simulation
-										.nodes(data)
-										.on("tick", function (d) {
-											node
-													.attr("cx", function (d) {
-														return d.x;
-													})
-													.attr("cy", function (d) {
-														return d.y;
-													});
-										});
-
-								function dragstarted(d) {
-									if (!d3.event.active) simulation.alphaTarget(.03).restart();
-									d.fx = d.x;
-									d.fy = d.y;
-								}
-
-								function dragged(d) {
-									d.fx = d3.event.x;
-									d.fy = d3.event.y;
-								}
-
-								function dragended(d) {
-									if (!d3.event.active) simulation.alphaTarget(.03);
-									d.fx = null;
-									d.fy = null;
-								}
-
+								bubble_graph(data,"#floor_is_lava_spread_by_level_intermediate", true, "level", "utility")
 							})
-
 						</script>
 					</section>
 
@@ -682,92 +539,14 @@
 						<div id="floor_is_lava_spread_by_level_advanced"></div>
 
 						<script>
-							var svg_spread_by_level_advanced = d3.select("#floor_is_lava_spread_by_level_advanced")
-									.append("svg")
-									.attr("width", width)
-									.attr("height", height)
-
-							var lvl_sort = [];
-							lvl_sort["BEGINNER"] = (width / 4);
-							lvl_sort["INTERMEDIATE"] = (width / 4) * 2;
-							lvl_sort["ADVANCED"] = (width / 4) * 3;
-
-							// Locally lava.csv
 							d3.csv("lava.csv", function (data) {
 
 								data = data.filter(function (d) {
-									return d.value > 0
+									return d.value > 0;
 								})
 
-								const g = svg_spread_by_level_advanced.append("g")
-										.selectAll("ellipse")
-										.data(data)
-										.enter();
-
-								const node = g.append("ellipse")
-										.attr("class", "node")
-										.attr("data-id", function (d) {
-											return d.key
-										})
-										.attr("rx", bubble_size)
-										.attr("cx", width / 2)
-										.attr("cy", height / 2)
-										.style("fill", function (d) {
-											return color(d.region)
-										})
-										.style("fill-opacity", 0.8)
-										.attr("stroke", function (d) {
-											return border_color(d.region)
-										})
-										.style("stroke-width", 1)
-										.call(d3.drag()
-												.on("start", dragstarted)
-												.on("drag", dragged)
-												.on("end", dragended));
-
-								const simulation = d3.forceSimulation()
-										.force('x', d3.forceX().x(function (d) {
-											return lvl_sort[d.level];
-										}))
-										.force('y', d3.forceY().y(function (d) {
-											return util_sort[d.utility];
-										}))
-										.force("charge", d3.forceManyBody().strength(.1))
-										.force('collide', d3.forceCollide().strength(1).radius(function (d) {
-											return bubble_size;
-										}).iterations(1))
-
-								simulation
-										.nodes(data)
-										.on("tick", function (d) {
-											node
-													.attr("cx", function (d) {
-														return d.x;
-													})
-													.attr("cy", function (d) {
-														return d.y;
-													});
-										});
-
-								function dragstarted(d) {
-									if (!d3.event.active) simulation.alphaTarget(.03).restart();
-									d.fx = d.x;
-									d.fy = d.y;
-								}
-
-								function dragged(d) {
-									d.fx = d3.event.x;
-									d.fy = d3.event.y;
-								}
-
-								function dragended(d) {
-									if (!d3.event.active) simulation.alphaTarget(.03);
-									d.fx = null;
-									d.fy = null;
-								}
-
+								bubble_graph(data,"#floor_is_lava_spread_by_level_advanced", true, "level", "utility")
 							})
-
 						</script>
 					</section>
 
