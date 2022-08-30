@@ -75,13 +75,10 @@
 					<p class="fragment">Obvious</p>
 				</section>
 
-				<section>
-					<h2>Looking at C++ features</h2>
-				</section>
-
 				<section data-auto-animate data-auto-animate-easing="cubic-bezier(0.770, 0.000, 0.175, 1.000)">
 					<script src="plugin/d3/d3.v4.js"></script>
 					<script src="plugin/d3/d3-scale-chromatic.v1.min.js"></script>
+					<h3>Take some C++ features</h3>
 					<div id="floor_is_lava_empty"></div>
 
 					<script>
@@ -95,7 +92,7 @@
 								.attr("width", width)
 								.attr("height", height)
 
-						const bubble_size = 30;
+						const bubble_size = 20;
 
 						// Locally lava.csv
 						d3.csv("https://raw.githubusercontent.com/patricia-gallardo/lava/main/lava.csv", function (data) {
@@ -126,20 +123,6 @@
 											.on("drag", dragged)
 											.on("end", dragended));
 
-							const node_label = g.append("text")
-									.text(function (d) {
-										return d.category;
-									})
-									.attr("data-id", function (d) {
-										return "label"+d.key
-									})
-									.attr('text-anchor', "middle")
-									.attr('pointer-events', "none")
-									.attr('font-family', "monospace")
-									.attr('font-size', function (d) {
-										return bubble_size * 0.5;
-									});
-
 							const level_simulation = false;
 
 							const simulation = d3.forceSimulation()
@@ -164,12 +147,123 @@
 												.attr("cy", function (d) {
 													return d.y;
 												});
-										node_label
-												.attr("x", function (d) {
+									});
+
+							function dragstarted(d) {
+								if (!d3.event.active) simulation.alphaTarget(.03).restart();
+								d.fx = d.x;
+								d.fy = d.y;
+							}
+
+							function dragged(d) {
+								d.fx = d3.event.x;
+								d.fy = d3.event.y;
+							}
+
+							function dragended(d) {
+								if (!d3.event.active) simulation.alphaTarget(.03);
+								d.fx = null;
+								d.fy = null;
+							}
+
+						})
+
+					</script>
+				</section>
+
+				<section data-auto-animate data-auto-animate-easing="cubic-bezier(0.770, 0.000, 0.175, 1.000)">
+					<h3>Maybe we can classify them</h3>
+					<div id="floor_is_lava_sorted"></div>
+
+					<script>
+						const color = d3.scaleOrdinal()
+								.domain(["Lava", "Leads to Lava", "Not Lava"])
+								.range([
+									'#f44336',
+									'#ffc107',
+									'#4caf50',
+								]);
+
+						const border_color = d3.scaleOrdinal()
+								.domain(["Lava", "Leads to Lava", "Not Lava"])
+								.range([
+									'#e91e63',
+									'#ff9800',
+									'#009688'
+								]);
+
+						var svg_sorted = d3.select("#floor_is_lava_sorted")
+								.append("svg")
+								.attr("width", width)
+								.attr("height", height)
+
+						const small_bubble_size = 20;
+
+						var horizontal_sort = [];
+						horizontal_sort["Not Lava"] = (width / 6);
+						horizontal_sort["Leads to Lava"] = (width / 6) * 3;
+						horizontal_sort["Lava"] = (width / 6) * 5;
+
+						// Locally lava.csv
+						d3.csv("https://raw.githubusercontent.com/patricia-gallardo/lava/main/lava.csv", function (data) {
+
+							data = data.filter(function (d) {
+								return d.value > 0
+							})
+
+							const LEFT = width / 6;
+							const CENTER = (width / 6) * 3;
+							const RIGHT = (width / 6) * 5;
+
+							const g = svg_sorted.append("g")
+									.selectAll("circle")
+									.data(data)
+									.enter();
+
+							const node = g.append("circle")
+									.attr("class", "node")
+									.attr("data-id", function (d) {
+										return d.key
+									})
+									.attr("r", small_bubble_size)
+									.attr("cx", width / 2)
+									.attr("cy", height / 2)
+									.style("fill", function (d) {
+										return color(d.region)
+									})
+									.style("fill-opacity", 0.8)
+									.attr("stroke", function (d) {
+										return border_color(d.region)
+									})
+									.style("stroke-width", 1)
+									.call(d3.drag()
+											.on("start", dragstarted)
+											.on("drag", dragged)
+											.on("end", dragended));
+
+							const level_simulation = false;
+
+							const simulation = d3.forceSimulation()
+									.force('x', d3.forceX().x(function (d) {
+										return horizontal_sort[d.region];
+									}))
+									.force('y', d3.forceY().y(function (d) {
+										return height / 2;
+									}))
+									.force("charge", d3.forceManyBody().strength(.1))
+									.force('collide', d3.forceCollide().strength(1).radius(function (d) {
+										return small_bubble_size;
+									}).iterations(1))
+
+							simulation
+									.nodes(data)
+									.on("tick", function (d) {
+										node
+												.attr("cx", function (d) {
 													return d.x;
 												})
-												.attr("y", function (d) {
-													return d.y + 3;
+												.attr("cy", function (d) {
+													return d.y;
 												});
 									});
 
@@ -199,23 +293,6 @@
 					<div id="floor_is_lava"></div>
 
 					<script>
-
-						const color = d3.scaleOrdinal()
-								.domain(["Lava", "Leads to Lava", "Not Lava"])
-								.range([
-									'#f44336',
-									'#ffc107',
-									'#4caf50',
-								]);
-
-						const border_color = d3.scaleOrdinal()
-								.domain(["Lava", "Leads to Lava", "Not Lava"])
-								.range([
-									'#e91e63',
-									'#ff9800',
-									'#009688'
-								]);
-
 						const COL1 = -8;
 						const COL2 = -6;
 						const COL3 = -4;
