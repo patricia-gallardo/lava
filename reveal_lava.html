@@ -496,7 +496,7 @@
 				</section>
 
 				<section data-auto-animate data-auto-animate-easing="cubic-bezier(0.770, 0.000, 0.175, 1.000)">
-					<h3>What is advanced?</h3>
+					<h3>What is advanced and specialized?</h3>
 					<div id="floor_is_lava_advanced"></div>
 
 					<script>
@@ -509,7 +509,7 @@
 						d3.csv("lava.csv", function (data) {
 
 							data = data.filter(function (d) {
-								return d.level == "ADVANCED";
+								return d.level == "ADVANCED" && d.utility == "SPECIALIZED";
 							})
 
 							const g = svg_advanced.append("g")
@@ -562,7 +562,7 @@
 									}))
 									.force("charge", d3.forceManyBody().strength(.1))
 									.force('collide', d3.forceCollide().strength(1).radius(function (d) {
-										return bubble_size * 3;
+										return bubble_size * 4;
 									}).iterations(1))
 
 							simulation
