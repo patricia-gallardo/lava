@@ -423,11 +423,6 @@
 									.data(data)
 									.enter();
 
-							var advanced_stroke_width = [];
-							advanced_stroke_width["BEGINNER"] = 1;
-							advanced_stroke_width["INTERMEDIATE"] = 2;
-							advanced_stroke_width["ADVANCED"] = 4;
-
 							const node = g.append("ellipse")
 									.attr("class", "node")
 									.attr("data-id", function (d) {
@@ -555,7 +550,7 @@
 
 							const simulation = d3.forceSimulation()
 									.force('x', d3.forceX().x(function (d) {
-										return horizontal_sort[d.region];
+										return width / 2;
 									}))
 									.force('y', d3.forceY().y(function (d) {
 										return height / 2;
@@ -607,7 +602,96 @@
 				</section>
 
 				<section data-auto-animate data-auto-animate-easing="cubic-bezier(0.770, 0.000, 0.175, 1.000)">
-					<h3>What is intermediate?</h3>
+					<h3>Spread by utility</h3>
+					<div id="floor_is_lava_sorted_thrice2"></div>
+
+					<script>
+						var svg_sorted_thrice2 = d3.select("#floor_is_lava_sorted_thrice2")
+								.append("svg")
+								.attr("width", width)
+								.attr("height", height)
+
+						// Locally lava.csv
+						d3.csv("lava.csv", function (data) {
+
+							data = data.filter(function (d) {
+								return d.value > 0
+							})
+
+							const g = svg_sorted_thrice2.append("g")
+									.selectAll("ellipse")
+									.data(data)
+									.enter();
+
+							const node = g.append("ellipse")
+									.attr("class", "node")
+									.attr("data-id", function (d) {
+										return d.key
+									})
+									.attr("rx", bubble_size)
+									.attr("cx", width / 2)
+									.attr("cy", height / 2)
+									.style("fill", function (d) {
+										return color(d.region)
+									})
+									.style("fill-opacity", 0.8)
+									.attr("stroke", function (d) {
+										return border_color(d.region)
+									})
+									.style("stroke-width", 1)
+									.call(d3.drag()
+											.on("start", dragstarted)
+											.on("drag", dragged)
+											.on("end", dragended));
+
+							const simulation = d3.forceSimulation()
+									.force('x', d3.forceX().x(function (d) {
+										return utility_sort[d.utility];
+									}))
+									.force('y', d3.forceY().y(function (d) {
+										return level_sort[d.level];
+									}))
+									.force("charge", d3.forceManyBody().strength(.1))
+									.force('collide', d3.forceCollide().strength(1).radius(function (d) {
+										return bubble_size;
+									}).iterations(1))
+
+							simulation
+									.nodes(data)
+									.on("tick", function (d) {
+										node
+												.attr("cx", function (d) {
+													return d.x;
+												})
+												.attr("cy", function (d) {
+													return d.y;
+												});
+									});
+
+							function dragstarted(d) {
+								if (!d3.event.active) simulation.alphaTarget(.03).restart();
+								d.fx = d.x;
+								d.fy = d.y;
+							}
+
+							function dragged(d) {
+								d.fx = d3.event.x;
+								d.fy = d3.event.y;
+							}
+
+							function dragended(d) {
+								if (!d3.event.active) simulation.alphaTarget(.03);
+								d.fx = null;
+								d.fy = null;
+							}
+
+						})
+
+					</script>
+				</section>
+
+				<section data-auto-animate data-auto-animate-easing="cubic-bezier(0.770, 0.000, 0.175, 1.000)">
+					<h3>What is necessary and beginner?</h3>
 					<div id="floor_is_lava_intermediate"></div>
 
 					<script>
@@ -620,7 +704,7 @@
 						d3.csv("lava.csv", function (data) {
 
 							data = data.filter(function (d) {
-								return d.level == "INTERMEDIATE";
+								return d.level == "BEGINNER" && d.utility == "NECESSARY";
 							})
 
 							const g = svg_intermediate.append("g")
@@ -666,7 +750,7 @@
 
 							const simulation = d3.forceSimulation()
 									.force('x', d3.forceX().x(function (d) {
-										return horizontal_sort[d.region];
+										return width / 2;
 									}))
 									.force('y', d3.forceY().y(function (d) {
 										return height / 2;
@@ -718,7 +802,7 @@
 				</section>
 
 				<section data-auto-animate data-auto-animate-easing="cubic-bezier(0.770, 0.000, 0.175, 1.000)">
-					<h3>What is beginner?</h3>
+					<h3>What is useful and beginner?</h3>
 					<div id="floor_is_lava_beginner"></div>
 
 					<script>
@@ -736,7 +820,7 @@
 						d3.csv("lava.csv", function (data) {
 
 							data = data.filter(function (d) {
-								return d.level == "BEGINNER";
+								return d.level == "BEGINNER" && d.utility == "USEFUL";
 							})
 
 							const g = svg_beginner.append("g")
@@ -782,7 +866,7 @@
 
 							const simulation = d3.forceSimulation()
 									.force('x', d3.forceX().x(function (d) {
-										return d.region == "Not Lava" ? width / 3 : ((width/3) * 2);
+										return width / 2;
 									}))
 									.force('y', d3.forceY().y(function (d) {
 										return height / 2;
