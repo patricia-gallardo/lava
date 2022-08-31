@@ -214,6 +214,214 @@
 							return svg_empty;
 						}
 
+						var atlas = function (data,id_tag) {
+
+							const COL1 = -8;
+							const COL2 = -6;
+							const COL3 = -4;
+							const COL4 = -2;
+							const COL5 = 0;
+							const COL6 = 2;
+							const COL7 = 4;
+							const COL8 = 6;
+							const COL9 = 8;
+
+							const xCenter = {
+								UB: COL2,
+								BUILD: COL9,
+								C: COL1,
+								CPP: COL5,
+								MACRO: COL2,
+								MMM: COL1,
+								OOP: COL5,
+								OUT: COL3,
+								CASTS: COL3,
+								STL: COL8,
+								THR: COL8,
+								TMP: COL8,
+								TOOLS: COL9,
+								PTR: COL1,
+								PASS: COL3,
+								CTP: COL7,
+								SMART: COL7,
+								CONTAIN: COL7
+							};
+
+							const ROW1 = -5;
+							const ROW2 = 0;
+							const ROW3 = 5;
+
+							const yCenter = {
+								UB: ROW2,
+								BUILD: ROW3,
+								C: ROW1,
+								CPP: ROW1,
+								CASTS: ROW2,
+								MACRO: ROW1,
+								MMM: ROW3,
+								OOP: ROW3,
+								OUT: ROW1,
+								STL: ROW2,
+								THR: ROW3,
+								TMP: ROW1,
+								TOOLS: ROW2,
+								PTR: ROW2,
+								PASS: ROW3,
+								CTP: ROW1,
+								SMART: ROW2,
+								CONTAIN: ROW3
+							};
+
+							const xLevelCenter = {
+								BEGINNER: (width / 6),
+								INTERMEDIATE: (width / 6) * 3,
+								ADVANCED: (width / 6) * 5,
+							}
+
+							const size = d3.scaleLinear()
+									.domain([40, 100])
+									.range([1, (width / 30)])
+
+							const stroke_width = d3.scaleLinear()
+									.domain([0, 100])
+									.range([1, (width / 80)])
+
+							var svg = d3.select(id_tag)
+									.append("svg")
+									.attr("width", width)
+									.attr("height", height)
+
+							const Tooltip = d3.select(id_tag)
+									.append("div")
+									.style("opacity", 0)
+									.attr("class", "tooltip")
+									.style("background-color", "white")
+									.style("border", "solid")
+									.style("border-width", "2px")
+									.style("border-radius", "5px")
+									.style("padding", "5px")
+
+							const mouseover = function (d) {
+								Tooltip
+										.style("opacity", 1)
+							}
+
+							const mousemove = function (d) {
+								Tooltip
+										.html('<u>' + d.key + '</u>' + "<br>" + d.category + "(" + d.level + ") : " + d.value)
+										.style("left", (d3.mouse(this)[0] + 20) + "px")
+										.style("top", (d3.mouse(this)[1]) + "px")
+							}
+
+							const mouseleave = function (d) {
+								Tooltip
+										.style("opacity", 0)
+							}
+
+							const g = svg.append("g")
+									.selectAll("ellipse")
+									.data(data)
+									.enter();
+
+							const node = g.append("ellipse")
+									.attr("class", "node")
+									.attr("data-id", function (d) {
+										return d.key
+									})
+									.attr("rx", function (d) {
+										return size(d.value)
+									})
+									.attr("cx", width / 2)
+									.attr("cy", height / 2)
+									.style("fill", function (d) {
+										return color(d.region)
+									})
+									.style("fill-opacity", 0.8)
+									.attr("stroke", function (d) {
+										return border_color(d.region)
+									})
+									.style("stroke-width", function (d) {
+										return stroke_width(d.wat)
+									})
+									.on("mouseover", mouseover)
+									.on("mousemove", mousemove)
+									.on("mouseleave", mouseleave)
+									.call(d3.drag()
+											.on("start", dragstarted)
+											.on("drag", dragged)
+											.on("end", dragended));
+
+							const node_label = g.append("text")
+									.text(function (d) {
+										return d.category;
+									})
+									.attr("data-id", function (d) {
+										return "label"+d.key
+									})
+									.attr('text-anchor', "middle")
+									.attr('pointer-events', "none")
+									.attr('font-family', "monospace")
+									.attr('font-size', function (d) {
+										return size(d.value) * 0.5;
+									});
+
+							const level_simulation = false;
+
+							const simulation = d3.forceSimulation()
+									.force('x', d3.forceX().x(function (d) {
+										return level_simulation ?
+												xLevelCenter[d.level] + (xCenter[d.category] * (width / 130)) :
+												horizontal_width + (xCenter[d.category] * (width / 20));
+									}))
+									.force('y', d3.forceY().y(function (d) {
+										return level_simulation ?
+												vertical_height + (yCenter[d.category] * (width / 40)) :
+												vertical_height + (yCenter[d.category] * (width / 40));
+									}))
+									.force("charge", d3.forceManyBody().strength(.1))
+									.force('collide', d3.forceCollide().strength(1).radius(function (d) {
+										return ((stroke_width(d.wat) / 2) + size(d.value));
+									}).iterations(1))
+
+							simulation
+									.nodes(data)
+									.on("tick", function (d) {
+										node
+												.attr("cx", function (d) {
+													return d.x;
+												})
+												.attr("cy", function (d) {
+													return d.y;
+												});
+										node_label
+												.attr("x", function (d) {
+													return d.x;
+												})
+												.attr("y", function (d) {
+													return d.y + 3;
+												});
+									});
+
+							function dragstarted(d) {
+								if (!d3.event.active) simulation.alphaTarget(.03).restart();
+								d.fx = d.x;
+								d.fy = d.y;
+							}
+
+							function dragged(d) {
+								d.fx = d3.event.x;
+								d.fy = d3.event.y;
+							}
+
+							function dragended(d) {
+								if (!d3.event.active) simulation.alphaTarget(.03);
+								d.fx = null;
+								d.fy = null;
+							}
+
+							return svg;
+						}
+
 						d3.csv("lava.csv", function (data) {
 
 							data = data.filter(function (d) {
@@ -415,7 +623,6 @@
 					</script>
 				</section>
 
-				<section>
 				<section data-auto-animate data-auto-animate-easing="cubic-bezier(0.770, 0.000, 0.175, 1.000)">
 					<h3>Spread by level Beginner</h3>
 					<div id="floor_is_lava_spread_by_level_beginner"></div>
@@ -486,9 +693,7 @@
 
 						</script>
 					</section>
-				</section>
 
-				<section>
 					<section data-auto-animate data-auto-animate-easing="cubic-bezier(0.770, 0.000, 0.175, 1.000)">
 						<h3>Spread by level Intermediate</h3>
 						<div id="floor_is_lava_spread_by_level_intermediate"></div>
@@ -536,9 +741,7 @@
 
 						</script>
 					</section>
-				</section>
 
-				<section>
 					<section data-auto-animate data-auto-animate-easing="cubic-bezier(0.770, 0.000, 0.175, 1.000)">
 						<h3>Spread by level Advanced</h3>
 						<div id="floor_is_lava_spread_by_level_advanced"></div>
@@ -587,225 +790,20 @@
 
 						</script>
 					</section>
-				</section>
 
 				<section data-auto-animate data-auto-animate-easing="cubic-bezier(0.770, 0.000, 0.175, 1.000)">
 					<h3>Atlas for beginners</h3>
 					<div id="atlas_for_beginners"></div>
 
 					<script>
-						const COL1 = -8;
-						const COL2 = -6;
-						const COL3 = -4;
-						const COL4 = -2;
-						const COL5 = 0;
-						const COL6 = 2;
-						const COL7 = 4;
-						const COL8 = 6;
-						const COL9 = 8;
-
-						const xCenter = {
-							UB: COL2,
-							BUILD: COL9,
-							C: COL1,
-							CPP: COL5,
-							MACRO: COL2,
-							MMM: COL1,
-							OOP: COL5,
-							OUT: COL3,
-							CASTS: COL3,
-							STL: COL8,
-							THR: COL8,
-							TMP: COL8,
-							TOOLS: COL9,
-							PTR: COL1,
-							PASS: COL3,
-							CTP: COL7,
-							SMART: COL7,
-							CONTAIN: COL7
-						};
-
-						const ROW1 = -5;
-						const ROW2 = 0;
-						const ROW3 = 5;
-
-						const yCenter = {
-							UB: ROW2,
-							BUILD: ROW3,
-							C: ROW1,
-							CPP: ROW1,
-							CASTS: ROW2,
-							MACRO: ROW1,
-							MMM: ROW3,
-							OOP: ROW3,
-							OUT: ROW1,
-							STL: ROW2,
-							THR: ROW3,
-							TMP: ROW1,
-							TOOLS: ROW2,
-							PTR: ROW2,
-							PASS: ROW3,
-							CTP: ROW1,
-							SMART: ROW2,
-							CONTAIN: ROW3
-						};
-
-						const xLevelCenter = {
-							BEGINNER: (width / 6),
-							INTERMEDIATE: (width / 6) * 3,
-							ADVANCED: (width / 6) * 5,
-						}
-
-						const size = d3.scaleLinear()
-								.domain([40, 100])
-								.range([1, (width / 30)])
-
-						const stroke_width = d3.scaleLinear()
-								.domain([0, 100])
-								.range([1, (width / 80)])
-
-						var svg = d3.select("#atlas_for_beginners")
-								.append("svg")
-								.attr("width", width)
-								.attr("height", height)
-
-						// Locally lava.csv
 						d3.csv("lava.csv", function (data) {
 
 							data = data.filter(function (d) {
 								return d.level == "BEGINNER"
 							})
 
-							const Tooltip = d3.select("#atlas_for_beginners")
-									.append("div")
-									.style("opacity", 0)
-									.attr("class", "tooltip")
-									.style("background-color", "white")
-									.style("border", "solid")
-									.style("border-width", "2px")
-									.style("border-radius", "5px")
-									.style("padding", "5px")
-
-							const mouseover = function (d) {
-								Tooltip
-										.style("opacity", 1)
-							}
-
-							const mousemove = function (d) {
-								Tooltip
-										.html('<u>' + d.key + '</u>' + "<br>" + d.category + "(" + d.level + ") : " + d.value)
-										.style("left", (d3.mouse(this)[0] + 20) + "px")
-										.style("top", (d3.mouse(this)[1]) + "px")
-							}
-
-							const mouseleave = function (d) {
-								Tooltip
-										.style("opacity", 0)
-							}
-
-							const g = svg.append("g")
-									.selectAll("ellipse")
-									.data(data)
-									.enter();
-
-							const node = g.append("ellipse")
-									.attr("class", "node")
-									.attr("data-id", function (d) {
-										return d.key
-									})
-									.attr("rx", function (d) {
-										return size(d.value)
-									})
-									.attr("cx", width / 2)
-									.attr("cy", height / 2)
-									.style("fill", function (d) {
-										return color(d.region)
-									})
-									.style("fill-opacity", 0.8)
-									.attr("stroke", function (d) {
-										return border_color(d.region)
-									})
-									.style("stroke-width", function (d) {
-										return stroke_width(d.wat)
-									})
-									.on("mouseover", mouseover)
-									.on("mousemove", mousemove)
-									.on("mouseleave", mouseleave)
-									.call(d3.drag()
-											.on("start", dragstarted)
-											.on("drag", dragged)
-											.on("end", dragended));
-
-							const node_label = g.append("text")
-									.text(function (d) {
-										return d.category;
-									})
-									.attr("data-id", function (d) {
-										return "label"+d.key
-									})
-									.attr('text-anchor', "middle")
-									.attr('pointer-events', "none")
-									.attr('font-family', "monospace")
-									.attr('font-size', function (d) {
-										return size(d.value) * 0.5;
-									});
-
-							const level_simulation = false;
-
-							const simulation = d3.forceSimulation()
-									.force('x', d3.forceX().x(function (d) {
-										return level_simulation ?
-												xLevelCenter[d.level] + (xCenter[d.category] * (width / 130)) :
-												horizontal_width + (xCenter[d.category] * (width / 20));
-									}))
-									.force('y', d3.forceY().y(function (d) {
-										return level_simulation ?
-												vertical_height + (yCenter[d.category] * (width / 40)) :
-												vertical_height + (yCenter[d.category] * (width / 40));
-									}))
-									.force("charge", d3.forceManyBody().strength(.1))
-									.force('collide', d3.forceCollide().strength(1).radius(function (d) {
-										return ((stroke_width(d.wat) / 2) + size(d.value));
-									}).iterations(1))
-
-							simulation
-									.nodes(data)
-									.on("tick", function (d) {
-										node
-												.attr("cx", function (d) {
-													return d.x;
-												})
-												.attr("cy", function (d) {
-													return d.y;
-												});
-										node_label
-												.attr("x", function (d) {
-													return d.x;
-												})
-												.attr("y", function (d) {
-													return d.y + 3;
-												});
-									});
-
-							function dragstarted(d) {
-								if (!d3.event.active) simulation.alphaTarget(.03).restart();
-								d.fx = d.x;
-								d.fy = d.y;
-							}
-
-							function dragged(d) {
-								d.fx = d3.event.x;
-								d.fy = d3.event.y;
-							}
-
-							function dragended(d) {
-								if (!d3.event.active) simulation.alphaTarget(.03);
-								d.fx = null;
-								d.fy = null;
-							}
-
+							atlas(data,"#atlas_for_beginners")
 						})
-
 					</script>
 				</section>
 
@@ -814,146 +812,13 @@
 					<div id="floor_is_lava3"></div>
 
 					<script>
-						var svg3 = d3.select("#floor_is_lava3")
-								.append("svg")
-								.attr("width", width)
-								.attr("height", height)
-
-						// Locally lava.csv
 						d3.csv("lava.csv", function (data) {
 
 							data = data.filter(function (d) {
 								return d.value > 0
 							})
 
-							const Tooltip = d3.select("#floor_is_lava2")
-									.append("div")
-									.style("opacity", 0)
-									.attr("class", "tooltip")
-									.style("background-color", "white")
-									.style("border", "solid")
-									.style("border-width", "2px")
-									.style("border-radius", "5px")
-									.style("padding", "5px")
-
-							const mouseover = function (d) {
-								Tooltip
-										.style("opacity", 1)
-							}
-
-							const mousemove = function (d) {
-								Tooltip
-										.html('<u>' + d.key + '</u>' + "<br>" + d.category + "(" + d.level + ") : " + d.value)
-										.style("left", (d3.mouse(this)[0] + 20) + "px")
-										.style("top", (d3.mouse(this)[1]) + "px")
-							}
-
-							const mouseleave = function (d) {
-								Tooltip
-										.style("opacity", 0)
-							}
-
-							const g = svg3.append("g")
-									.selectAll("ellipse")
-									.data(data)
-									.enter();
-
-							const node = g.append("ellipse")
-									.attr("class", "node")
-									.attr("data-id", function (d) {
-										return d.key
-									})
-									.attr("rx", function (d) {
-										return size(d.value)
-									})
-									.attr("cx", width / 2)
-									.attr("cy", height / 2)
-									.style("fill", function (d) {
-										return color(d.region)
-									})
-									.style("fill-opacity", 0.8)
-									.attr("stroke", function (d) {
-										return border_color(d.region)
-									})
-									.style("stroke-width", function (d) {
-										return stroke_width(d.wat)
-									})
-									.on("mouseover", mouseover)
-									.on("mousemove", mousemove)
-									.on("mouseleave", mouseleave)
-									.call(d3.drag()
-											.on("start", dragstarted)
-											.on("drag", dragged)
-											.on("end", dragended));
-
-							const node_label = g.append("text")
-									.text(function (d) {
-										return d.category;
-									})
-									.attr("data-id", function (d) {
-										return "label"+d.key
-									})
-									.attr('text-anchor', "middle")
-									.attr('pointer-events', "none")
-									.attr('font-family', "monospace")
-									.attr('font-size', function (d) {
-										return size(d.value) * 0.5;
-									});
-
-							const level_simulation = true;
-
-							const simulation = d3.forceSimulation()
-									.force('x', d3.forceX().x(function (d) {
-										return level_simulation ?
-												xLevelCenter[d.level] + (xCenter[d.category] * (width / 130)) :
-												horizontal_width + (xCenter[d.category] * (width / 20));
-									}))
-									.force('y', d3.forceY().y(function (d) {
-										return level_simulation ?
-												vertical_height + (yCenter[d.category] * (width / 40)) :
-												vertical_height + (yCenter[d.category] * (width / 40));
-									}))
-									.force("charge", d3.forceManyBody().strength(.1))
-									.force('collide', d3.forceCollide().strength(1).radius(function (d) {
-										return ((stroke_width(d.wat) / 2) + size(d.value));
-									}).iterations(1))
-
-							simulation
-									.nodes(data)
-									.on("tick", function (d) {
-										node
-												.attr("cx", function (d) {
-													return d.x;
-												})
-												.attr("cy", function (d) {
-													return d.y;
-												});
-										node_label
-												.attr("x", function (d) {
-													return d.x;
-												})
-												.attr("y", function (d) {
-													return d.y + 3;
-												});
-									});
-
-							function dragstarted(d) {
-								if (!d3.event.active) simulation.alphaTarget(.03).restart();
-								d.fx = d.x;
-								d.fy = d.y;
-							}
-
-							function dragged(d) {
-								d.fx = d3.event.x;
-								d.fy = d3.event.y;
-							}
-
-							function dragended(d) {
-								if (!d3.event.active) simulation.alphaTarget(.03);
-								d.fx = null;
-								d.fy = null;
-							}
-
+							atlas(data,"#floor_is_lava3")
 						})
 					</script>
 				</section>
@@ -963,146 +828,13 @@
 						<div id="atlas_for_intermediate"></div>
 
 						<script>
-							var svg_for_intermediate = d3.select("#atlas_for_intermediate")
-									.append("svg")
-									.attr("width", width)
-									.attr("height", height)
-
-							// Locally lava.csv
 							d3.csv("lava.csv", function (data) {
 
 								data = data.filter(function (d) {
-									return d.level === "INTERMEDIATE"
+									return d.level == "INTERMEDIATE"
 								})
 
-								const Tooltip = d3.select("#atlas_for_intermediate")
-										.append("div")
-										.style("opacity", 0)
-										.attr("class", "tooltip")
-										.style("background-color", "white")
-										.style("border", "solid")
-										.style("border-width", "2px")
-										.style("border-radius", "5px")
-										.style("padding", "5px")
-
-								const mouseover = function (d) {
-									Tooltip
-											.style("opacity", 1)
-								}
-
-								const mousemove = function (d) {
-									Tooltip
-											.html('<u>' + d.key + '</u>' + "<br>" + d.category + "(" + d.level + ") : " + d.value)
-											.style("left", (d3.mouse(this)[0] + 20) + "px")
-											.style("top", (d3.mouse(this)[1]) + "px")
-								}
-
-								const mouseleave = function (d) {
-									Tooltip
-											.style("opacity", 0)
-								}
-
-								const g = svg_for_intermediate.append("g")
-										.selectAll("ellipse")
-										.data(data)
-										.enter();
-
-								const node = g.append("ellipse")
-										.attr("class", "node")
-										.attr("data-id", function (d) {
-											return d.key
-										})
-										.attr("rx", function (d) {
-											return size(d.value)
-										})
-										.attr("cx", width / 2)
-										.attr("cy", height / 2)
-										.style("fill", function (d) {
-											return color(d.region)
-										})
-										.style("fill-opacity", 0.8)
-										.attr("stroke", function (d) {
-											return border_color(d.region)
-										})
-										.style("stroke-width", function (d) {
-											return stroke_width(d.wat)
-										})
-										.on("mouseover", mouseover)
-										.on("mousemove", mousemove)
-										.on("mouseleave", mouseleave)
-										.call(d3.drag()
-												.on("start", dragstarted)
-												.on("drag", dragged)
-												.on("end", dragended));
-
-								const node_label = g.append("text")
-										.text(function (d) {
-											return d.category;
-										})
-										.attr("data-id", function (d) {
-											return "label"+d.key
-										})
-										.attr('text-anchor', "middle")
-										.attr('pointer-events', "none")
-										.attr('font-family', "monospace")
-										.attr('font-size', function (d) {
-											return size(d.value) * 0.5;
-										});
-
-								const level_simulation = false;
-
-								const simulation = d3.forceSimulation()
-										.force('x', d3.forceX().x(function (d) {
-											return level_simulation ?
-													xLevelCenter[d.level] + (xCenter[d.category] * (width / 130)) :
-													horizontal_width + (xCenter[d.category] * (width / 20));
-										}))
-										.force('y', d3.forceY().y(function (d) {
-											return level_simulation ?
-													vertical_height + (yCenter[d.category] * (width / 40)) :
-													vertical_height + (yCenter[d.category] * (width / 40));
-										}))
-										.force("charge", d3.forceManyBody().strength(.1))
-										.force('collide', d3.forceCollide().strength(1).radius(function (d) {
-											return ((stroke_width(d.wat) / 2) + size(d.value));
-										}).iterations(1))
-
-								simulation
-										.nodes(data)
-										.on("tick", function (d) {
-											node
-													.attr("cx", function (d) {
-														return d.x;
-													})
-													.attr("cy", function (d) {
-														return d.y;
-													});
-											node_label
-													.attr("x", function (d) {
-														return d.x;
-													})
-													.attr("y", function (d) {
-														return d.y + 3;
-													});
-										});
-
-								function dragstarted(d) {
-									if (!d3.event.active) simulation.alphaTarget(.03).restart();
-									d.fx = d.x;
-									d.fy = d.y;
-								}
-
-								function dragged(d) {
-									d.fx = d3.event.x;
-									d.fy = d3.event.y;
-								}
-
-								function dragended(d) {
-									if (!d3.event.active) simulation.alphaTarget(.03);
-									d.fx = null;
-									d.fy = null;
-								}
-
+								atlas(data,"#atlas_for_intermediate")
 							})
 						</script>
 					</section>
@@ -1113,146 +845,13 @@
 					<div id="atlas_for_advanced"></div>
 
 					<script>
-						var svg_for_advanced = d3.select("#atlas_for_advanced")
-								.append("svg")
-								.attr("width", width)
-								.attr("height", height)
-
-						// Locally lava.csv
 						d3.csv("lava.csv", function (data) {
 
 							data = data.filter(function (d) {
-								return d.level === "ADVANCED"
+								return d.level == "ADVANCED"
 							})
 
-							const Tooltip = d3.select("#atlas_for_advanced")
-									.append("div")
-									.style("opacity", 0)
-									.attr("class", "tooltip")
-									.style("background-color", "white")
-									.style("border", "solid")
-									.style("border-width", "2px")
-									.style("border-radius", "5px")
-									.style("padding", "5px")
-
-							const mouseover = function (d) {
-								Tooltip
-										.style("opacity", 1)
-							}
-
-							const mousemove = function (d) {
-								Tooltip
-										.html('<u>' + d.key + '</u>' + "<br>" + d.category + "(" + d.level + ") : " + d.value)
-										.style("left", (d3.mouse(this)[0] + 20) + "px")
-										.style("top", (d3.mouse(this)[1]) + "px")
-							}
-
-							const mouseleave = function (d) {
-								Tooltip
-										.style("opacity", 0)
-							}
-
-							const g = svg_for_advanced.append("g")
-									.selectAll("ellipse")
-									.data(data)
-									.enter();
-
-							const node = g.append("ellipse")
-									.attr("class", "node")
-									.attr("data-id", function (d) {
-										return d.key
-									})
-									.attr("rx", function (d) {
-										return size(d.value)
-									})
-									.attr("cx", width / 2)
-									.attr("cy", height / 2)
-									.style("fill", function (d) {
-										return color(d.region)
-									})
-									.style("fill-opacity", 0.8)
-									.attr("stroke", function (d) {
-										return border_color(d.region)
-									})
-									.style("stroke-width", function (d) {
-										return stroke_width(d.wat)
-									})
-									.on("mouseover", mouseover)
-									.on("mousemove", mousemove)
-									.on("mouseleave", mouseleave)
-									.call(d3.drag()
-											.on("start", dragstarted)
-											.on("drag", dragged)
-											.on("end", dragended));
-
-							const node_label = g.append("text")
-									.text(function (d) {
-										return d.category;
-									})
-									.attr("data-id", function (d) {
-										return "label"+d.key
-									})
-									.attr('text-anchor', "middle")
-									.attr('pointer-events', "none")
-									.attr('font-family', "monospace")
-									.attr('font-size', function (d) {
-										return size(d.value) * 0.5;
-									});
-
-							const level_simulation = false;
-
-							const simulation = d3.forceSimulation()
-									.force('x', d3.forceX().x(function (d) {
-										return level_simulation ?
-												xLevelCenter[d.level] + (xCenter[d.category] * (width / 130)) :
-												horizontal_width + (xCenter[d.category] * (width / 20));
-									}))
-									.force('y', d3.forceY().y(function (d) {
-										return level_simulation ?
-												vertical_height + (yCenter[d.category] * (width / 40)) :
-												vertical_height + (yCenter[d.category] * (width / 40));
-									}))
-									.force("charge", d3.forceManyBody().strength(.1))
-									.force('collide', d3.forceCollide().strength(1).radius(function (d) {
-										return ((stroke_width(d.wat) / 2) + size(d.value));
-									}).iterations(1))
-
-							simulation
-									.nodes(data)
-									.on("tick", function (d) {
-										node
-												.attr("cx", function (d) {
-													return d.x;
-												})
-												.attr("cy", function (d) {
-													return d.y;
-												});
-										node_label
-												.attr("x", function (d) {
-													return d.x;
-												})
-												.attr("y", function (d) {
-													return d.y + 3;
-												});
-									});
-
-							function dragstarted(d) {
-								if (!d3.event.active) simulation.alphaTarget(.03).restart();
-								d.fx = d.x;
-								d.fy = d.y;
-							}
-
-							function dragged(d) {
-								d.fx = d3.event.x;
-								d.fy = d3.event.y;
-							}
-
-							function dragended(d) {
-								if (!d3.event.active) simulation.alphaTarget(.03);
-								d.fx = null;
-								d.fy = null;
-							}
-
+							atlas(data,"#atlas_for_advanced")
 						})
 					</script>
 				</section>
