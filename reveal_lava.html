@@ -330,11 +330,6 @@
 								.attr("width", width)
 								.attr("height", height)
 
-
-
-
-
-
 						// Locally lava.csv
 						d3.csv("lava.csv", function (data) {
 
@@ -464,7 +459,7 @@
 										.data(data)
 										.enter()
 										.append('p')
-										.attr('class', 'flex-item')
+										.attr('class', 'flex-item fragment')
 										.text(function (d) { return d.key })
 
 								return container;
