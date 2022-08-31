@@ -43,7 +43,7 @@
 						'#009688'
 					]);
 
-			var bubble_graph = function (data,id_tag,use_color,halign,valign) {
+			var bubble_graph = function (data,id_tag,use_color,halign,valign,use_wat) {
 				var svg_empty = d3.select(id_tag)
 						.append("svg")
 						.attr("width", width)
@@ -59,7 +59,9 @@
 						.attr("data-id", function (d) {
 							return d.key
 						})
-						.attr("rx", bubble_size)
+						.attr("rx", function (d) {
+							return use_wat ? wat_size(d.wat) : bubble_size
+						})
 						.attr("cx", width / 2)
 						.attr("cy", height / 2)
 						.style("fill", function (d) {
@@ -194,6 +196,10 @@
 
 			const size = d3.scaleLinear()
 					.domain([40, 100])
+					.range([1, (width / 30)])
+
+			const wat_size = d3.scaleLinear()
+					.domain([0, 100])
 					.range([1, (width / 30)])
 
 			const stroke_width = d3.scaleLinear()
@@ -380,7 +386,7 @@
 								return d.value > 0;
 							})
 
-							bubble_graph(data,"#floor_is_lava_empty2", false, "center", "center")
+							bubble_graph(data,"#floor_is_lava_empty2", false, "center", "center", false)
 						})
 					</script>
 				</section>
@@ -395,7 +401,7 @@
 								return d.value > 0;
 							})
 
-							bubble_graph(data,"#floor_is_lava_empty3", true, "center", "center")
+							bubble_graph(data,"#floor_is_lava_empty3", true, "center", "center", false)
 						})
 					</script>
 				</section>
@@ -525,7 +531,7 @@
 								return d.value > 0;
 							})
 
-							bubble_graph(data,"#floor_is_lava_empty4", true, "center", "center")
+							bubble_graph(data,"#floor_is_lava_empty4", true, "center", "center", false)
 						})
 					</script>
 				</section>
@@ -604,7 +610,7 @@
 								return d.value > 0;
 							})
 
-							bubble_graph(data,"#floor_is_lava_empty", false, "center", "center")
+							bubble_graph(data,"#floor_is_lava_empty", false, "center", "center", false)
 						})
 					</script>
 				</section>
@@ -809,7 +815,7 @@
 								return d.value > 0;
 							})
 
-							bubble_graph(data,"#floor_is_lava_spread_by_level_beginner", true, "level", "utility")
+							bubble_graph(data,"#floor_is_lava_spread_by_level_beginner", true, "level", "utility", false)
 						})
 					</script>
 				</section>
@@ -825,9 +831,13 @@
 									return d.level == "BEGINNER";
 								})
 
-								bubble_graph(data,"#floor_is_lava_beginner", true, "level", "utility")
+								bubble_graph(data,"#floor_is_lava_beginner", true, "level", "utility", false)
 							})
 						</script>
+						<p class="fragment">
+							Interestingly beginner features in C++ seem to be mostly <em>Not Lava</em>, and mostly in
+							the <em>Neccesary</em> and <em>Useful</em> areas of utility
+						</p>
 					</section>
 					<section data-auto-animate data-auto-animate-easing="cubic-bezier(0.770, 0.000, 0.175, 1.000)">
 						<h3>What is beginner?</h3>
@@ -867,7 +877,7 @@
 									return d.value > 0;
 								})
 
-								bubble_graph(data,"#floor_is_lava_spread_by_level_intermediate", true, "level", "utility")
+								bubble_graph(data,"#floor_is_lava_spread_by_level_intermediate", true, "level", "utility", false)
 							})
 						</script>
 					</section>
@@ -883,9 +893,14 @@
 									return d.level == "INTERMEDIATE";
 								})
 
-								bubble_graph(data,"#floor_is_lava_intermediate", true, "level", "utility")
+								bubble_graph(data,"#floor_is_lava_intermediate", true, "level", "utility", false)
 							})
 						</script>
+						<p class="fragment">
+							Intermediate features in C++ are a mixed bag, but seem to be filling out in the areas of
+							<em>Leads to Lava</em> and <em>Lava</em>, and you already see a lean towards
+							<em>Specialized</em>
+						</p>
 					</section>
 				<section data-auto-animate data-auto-animate-easing="cubic-bezier(0.770, 0.000, 0.175, 1.000)">
 					<h3>What is intermediate?</h3>
@@ -925,7 +940,7 @@
 									return d.value > 0;
 								})
 
-								bubble_graph(data,"#floor_is_lava_spread_by_level_advanced", true, "level", "utility")
+								bubble_graph(data,"#floor_is_lava_spread_by_level_advanced", true, "level", "utility", false)
 							})
 						</script>
 					</section>
@@ -942,9 +957,13 @@
 									return d.level == "ADVANCED";
 								})
 
-								bubble_graph(data,"#floor_is_lava_advanced", true, "level", "utility")
+								bubble_graph(data,"#floor_is_lava_advanced", true, "level", "utility", false)
 							})
 						</script>
+						<p class="fragment">
+							Advanced features in C++ are clearly in the <em>Specialized</em> category, here I suspect
+							only a few percent of C++ developers are proficient.
+						</p>
 					</section>
 				<section data-auto-animate data-auto-animate-easing="cubic-bezier(0.770, 0.000, 0.175, 1.000)">
 					<h3>What is advanced?</h3>
@@ -969,6 +988,21 @@
 						d3.csv("lava.csv", function (data) {
 							data = data.filter(function (d) { return d.level === "ADVANCED" && d.utility === "SPECIALIZED"; })
 							tabulate(data,"#floor_is_lava_advanced_special")
+						})
+					</script>
+				</section>
+
+				<section data-auto-animate data-auto-animate-easing="cubic-bezier(0.770, 0.000, 0.175, 1.000)">
+					<h4 class="fragment">Do we even know what is Wat?</h4>
+					<div class="fragment" id="floor_is_lava_wat"></div>
+					<script>
+						d3.csv("lava.csv", function (data) {
+
+							data = data.filter(function (d) {
+								return d.value > 0;
+							})
+
+							bubble_graph(data,"#floor_is_lava_wat", false, "center", "center", true)
 						})
 					</script>
 				</section>
