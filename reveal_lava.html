@@ -834,7 +834,7 @@
 							d3.csv("lava.csv", function (data) {
 
 								data = data.filter(function (d) {
-									return d.level == "BEGINNER";
+									return d.level === "BEGINNER";
 								})
 
 								const bubble_zoom = 1;
@@ -898,7 +898,7 @@
 							d3.csv("lava.csv", function (data) {
 
 								data = data.filter(function (d) {
-									return d.level == "INTERMEDIATE";
+									return d.level === "INTERMEDIATE";
 								})
 
 								const bubble_zoom = 1;
@@ -964,7 +964,7 @@
 							d3.csv("lava.csv", function (data) {
 
 								data = data.filter(function (d) {
-									return d.level == "ADVANCED";
+									return d.level === "ADVANCED";
 								})
 
 								const bubble_zoom = 1;
@@ -1069,17 +1069,17 @@
 						})
 					</script>
 					<p class="fragment">
-						<em>Debuggers</em>,
-						<em>Overloading</em>,
-						<em>Undefined Behavior</em>,
-						<em>Manual memory management</em>,
-						<em>C</em>,
-						<em>#define</em>,
-						<em>Globals</em>,
-						<em>struct</em>,
-						<em>namespaces</em>,
-						<em>Pointer arithmetic</em> and
-						<em>bitwise operations</em>
+						<em class="fragment">Debuggers</em><em class="fragment"> ●</em>
+ 						<em class="fragment">Overloading</em><em class="fragment"> ●</em>
+						<em class="fragment">Undefined Behavior</em> <br>
+						<em class="fragment">Manual memory management</em><em class="fragment"> ●</em>
+						<em class="fragment">C</em><em class="fragment"> ●</em>
+						<em class="fragment">#define</em><br>
+						<em class="fragment">Globals</em><em class="fragment"> ●</em>
+						<em class="fragment">struct</em><em class="fragment"> ●</em>
+						<em class="fragment">namespaces</em><em class="fragment"> ●</em>
+						<em class="fragment">Pointer arithmetic</em> <br>
+						<em class="fragment">bitwise operations</em>
 					</p>
 				</section>
 
@@ -1097,16 +1097,16 @@
 						})
 					</script>
 					<p>
-						<em>Debuggers</em>,
-						<em>Overloading</em>,
-						<em>Undefined Behavior</em>,
-						<em>Manual memory management</em>,
-						<em>C</em>,
-						<em>#define</em>,
-						<em>Globals</em>,
-						<em>struct</em>,
-						<em>namespaces</em>,
-						<em>Pointer arithmetic</em> and
+						<em>Debuggers</em><em> ●</em>
+						<em>Overloading</em><em> ●</em>
+						<em>Undefined Behavior</em> <br>
+						<em>Manual memory management</em><em> ●</em>
+						<em>C</em><em> ●</em>
+						<em>#define</em><br>
+						<em>Globals</em><em> ●</em>
+						<em>struct</em><em> ●</em>
+						<em>namespaces</em><em> ●</em>
+						<em>Pointer arithmetic</em> <br>
 						<em>bitwise operations</em>
 					</p>
 				</section>
@@ -1119,7 +1119,7 @@
 						d3.csv("lava.csv", function (data) {
 
 							data = data.filter(function (d) {
-								return d.level == "BEGINNER"
+								return d.level === "BEGINNER"
 							})
 
 							atlas(data,"#atlas_for_beginners")
@@ -1152,7 +1152,7 @@
 							d3.csv("lava.csv", function (data) {
 
 								data = data.filter(function (d) {
-									return d.level == "INTERMEDIATE"
+									return d.level === "INTERMEDIATE"
 								})
 
 								atlas(data,"#atlas_for_intermediate")
@@ -1169,7 +1169,7 @@
 						d3.csv("lava.csv", function (data) {
 
 							data = data.filter(function (d) {
-								return d.level == "ADVANCED"
+								return d.level === "ADVANCED"
 							})
 
 							atlas(data,"#atlas_for_advanced")
@@ -1195,7 +1195,7 @@
 						d3.csv("lava.csv", function (data) {
 
 							data = data.filter(function (d) {
-								return d.level == "BEGINNER" && d.utility === "NECESSARY";
+								return d.level === "BEGINNER" && d.utility === "NECESSARY";
 							})
 
 							const bubble_zoom = 1;
