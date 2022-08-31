@@ -291,33 +291,6 @@
 									.attr("width", width)
 									.attr("height", height)
 
-							const Tooltip = d3.select(id_tag)
-									.append("div")
-									.style("opacity", 0)
-									.attr("class", "tooltip")
-									.style("background-color", "white")
-									.style("border", "solid")
-									.style("border-width", "2px")
-									.style("border-radius", "5px")
-									.style("padding", "5px")
-
-							const mouseover = function (d) {
-								Tooltip
-										.style("opacity", 1)
-							}
-
-							const mousemove = function (d) {
-								Tooltip
-										.html('<u>' + d.key + '</u>' + "<br>" + d.category + "(" + d.level + ") : " + d.value)
-										.style("left", (d3.mouse(this)[0] + 20) + "px")
-										.style("top", (d3.mouse(this)[1]) + "px")
-							}
-
-							const mouseleave = function (d) {
-								Tooltip
-										.style("opacity", 0)
-							}
-
 							const g = svg.append("g")
 									.selectAll("ellipse")
 									.data(data)
@@ -343,9 +316,6 @@
 									.style("stroke-width", function (d) {
 										return stroke_width(d.wat)
 									})
-									.on("mouseover", mouseover)
-									.on("mousemove", mousemove)
-									.on("mouseleave", mouseleave)
 									.call(d3.drag()
 											.on("start", dragstarted)
 											.on("drag", dragged)
