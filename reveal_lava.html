@@ -130,77 +130,77 @@
 				return svg_empty;
 			}
 
+			const COL1 = -8;
+			const COL2 = -6;
+			const COL3 = -4;
+			const COL4 = -2;
+			const COL5 = 0;
+			const COL6 = 2;
+			const COL7 = 4;
+			const COL8 = 6;
+			const COL9 = 8;
+
+			const xCenter = {
+				UB: COL2,
+				BUILD: COL9,
+				C: COL1,
+				CPP: COL5,
+				MACRO: COL2,
+				MMM: COL1,
+				OOP: COL5,
+				OUT: COL3,
+				CASTS: COL3,
+				STL: COL8,
+				THR: COL8,
+				TMP: COL8,
+				TOOLS: COL9,
+				PTR: COL1,
+				PASS: COL3,
+				CTP: COL7,
+				SMART: COL7,
+				CONTAIN: COL7
+			};
+
+			const ROW1 = -5;
+			const ROW2 = 0;
+			const ROW3 = 5;
+
+			const yCenter = {
+				UB: ROW2,
+				BUILD: ROW3,
+				C: ROW1,
+				CPP: ROW1,
+				CASTS: ROW2,
+				MACRO: ROW1,
+				MMM: ROW3,
+				OOP: ROW3,
+				OUT: ROW1,
+				STL: ROW2,
+				THR: ROW3,
+				TMP: ROW1,
+				TOOLS: ROW2,
+				PTR: ROW2,
+				PASS: ROW3,
+				CTP: ROW1,
+				SMART: ROW2,
+				CONTAIN: ROW3
+			};
+
+			const xLevelCenter = {
+				BEGINNER: (width / 6),
+				INTERMEDIATE: (width / 6) * 3,
+				ADVANCED: (width / 6) * 5,
+			}
+
+			const size = d3.scaleLinear()
+					.domain([40, 100])
+					.range([1, (width / 30)])
+
+			const stroke_width = d3.scaleLinear()
+					.domain([0, 100])
+					.range([1, (width / 80)])
+
 			var atlas = function (data,id_tag) {
-
-				const COL1 = -8;
-				const COL2 = -6;
-				const COL3 = -4;
-				const COL4 = -2;
-				const COL5 = 0;
-				const COL6 = 2;
-				const COL7 = 4;
-				const COL8 = 6;
-				const COL9 = 8;
-
-				const xCenter = {
-					UB: COL2,
-					BUILD: COL9,
-					C: COL1,
-					CPP: COL5,
-					MACRO: COL2,
-					MMM: COL1,
-					OOP: COL5,
-					OUT: COL3,
-					CASTS: COL3,
-					STL: COL8,
-					THR: COL8,
-					TMP: COL8,
-					TOOLS: COL9,
-					PTR: COL1,
-					PASS: COL3,
-					CTP: COL7,
-					SMART: COL7,
-					CONTAIN: COL7
-				};
-
-				const ROW1 = -5;
-				const ROW2 = 0;
-				const ROW3 = 5;
-
-				const yCenter = {
-					UB: ROW2,
-					BUILD: ROW3,
-					C: ROW1,
-					CPP: ROW1,
-					CASTS: ROW2,
-					MACRO: ROW1,
-					MMM: ROW3,
-					OOP: ROW3,
-					OUT: ROW1,
-					STL: ROW2,
-					THR: ROW3,
-					TMP: ROW1,
-					TOOLS: ROW2,
-					PTR: ROW2,
-					PASS: ROW3,
-					CTP: ROW1,
-					SMART: ROW2,
-					CONTAIN: ROW3
-				};
-
-				const xLevelCenter = {
-					BEGINNER: (width / 6),
-					INTERMEDIATE: (width / 6) * 3,
-					ADVANCED: (width / 6) * 5,
-				}
-
-				const size = d3.scaleLinear()
-						.domain([40, 100])
-						.range([1, (width / 30)])
-
-				const stroke_width = d3.scaleLinear()
-						.domain([0, 100])
-						.range([1, (width / 80)])
 
 				var svg = d3.select(id_tag)
 						.append("svg")
