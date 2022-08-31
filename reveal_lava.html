@@ -97,7 +97,7 @@
 						}))
 						.force("charge", d3.forceManyBody().strength(.1))
 						.force('collide', d3.forceCollide().strength(1).radius(function (d) {
-							return bubble_size;
+							return use_wat ? wat_size(d.wat) : bubble_size;
 						}).iterations(1))
 
 				simulation
@@ -200,7 +200,7 @@
 
 			const wat_size = d3.scaleLinear()
 					.domain([0, 100])
-					.range([1, (width / 30)])
+					.range([1, (width / 20)])
 
 			const stroke_width = d3.scaleLinear()
 					.domain([0, 100])
@@ -1008,6 +1008,68 @@
 				</section>
 
 				<section data-auto-animate data-auto-animate-easing="cubic-bezier(0.770, 0.000, 0.175, 1.000)">
+					<h4>Do we even know what is Wat?</h4>
+					<div id="floor_is_lava_wat2"></div>
+					<script>
+						d3.csv("lava.csv", function (data) {
+
+							data = data.filter(function (d) {
+								return d.wat > 50.0;
+							})
+
+							bubble_graph(data,"#floor_is_lava_wat2", false, "center", "center", true)
+						})
+					</script>
+					<p class="fragment">
+						Turns out that the biggest Wat's in the poll was <em>Subsumption</em>, <em>std::launder</em> and
+						<em>Flexible Array Member(FAM)</em>.
+					</p>
+				</section>
+
+				<section data-auto-animate data-auto-animate-easing="cubic-bezier(0.770, 0.000, 0.175, 1.000)">
+					<h4>What was the least Wat?</h4>
+					<div id="floor_is_lava_wat3"></div>
+					<script>
+						d3.csv("lava.csv", function (data) {
+
+							data = data.filter(function (d) {
+								return d.value > 0;
+							})
+
+							bubble_graph(data,"#floor_is_lava_wat3", false, "center", "center", true)
+						})
+					</script>
+				</section>
+
+				<section data-auto-animate data-auto-animate-easing="cubic-bezier(0.770, 0.000, 0.175, 1.000)">
+					<h4>What was the least Wat?</h4>
+					<div id="floor_is_lava_wat4"></div>
+					<script>
+						d3.csv("lava.csv", function (data) {
+
+							data = data.filter(function (d) {
+								return d.wat < 5.0;
+							})
+
+							bubble_graph(data,"#floor_is_lava_wat4", false, "center", "center", true)
+						})
+					</script>
+					<p class="fragment">
+						<em>Debuggers</em>,
+						<em>Overloading</em>,
+						<em>Undefined Behavior</em>,
+						<em>Manual memory management</em>,
+						<em>C</em>,
+						<em>#define</em>,
+						<em>Globals</em>,
+						<em>struct</em>,
+						<em>namespaces</em>,
+						<em>Pointer arithmetic</em> and
+						<em>bitwise operations</em>
+					</p>
+				</section>
+
+				<section data-auto-animate data-auto-animate-easing="cubic-bezier(0.770, 0.000, 0.175, 1.000)">
 					<h3>Atlas for beginners</h3>
 					<div id="atlas_for_beginners"></div>
 
@@ -1025,6 +1087,7 @@
 
 				<section>
 				<section data-auto-animate data-auto-animate-easing="cubic-bezier(0.770, 0.000, 0.175, 1.000)">
+					<h3>Full atlas</h3>
 					<div id="floor_is_lava3"></div>
 
 					<script>
