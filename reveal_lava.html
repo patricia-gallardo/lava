@@ -367,7 +367,7 @@
 
 				<section>
 					<h4 class="fragment">How do you teach a programming language</h4>
-					<h4 class="fragment">when the Floor is Lava?</h4>
+					<h3 class="fragment">when the Floor is Lava?</h3>
 				</section>
 
 				<section data-auto-animate data-auto-animate-easing="cubic-bezier(0.770, 0.000, 0.175, 1.000)">
@@ -419,7 +419,7 @@
 				<section>
 					<h4 class="fragment">Who knows what std::launder does anyway?</h4>
 					<h4 class="fragment">Or what Subsumption is?</h4>
-					<h4 class="fragment">Who needs to know?</h4>
+					<h3 class="fragment">Who needs to know?</h3>
 				</section>
 
 				<section>
@@ -433,75 +433,97 @@
 				</section>
 
 				<section>
-					<h3 class="fragment">
-						Teaching an introduction to C++ requires us to select a subset of the language that will be the
-						starting point for the rest of their learning.
-					</h3>
-                </section>
+					<h4 class="fragment">Teaching an introduction to C++, requires us to</h4>
+					<h3 class="fragment">select a subset of the language</h3>
+					<h4 class="fragment">which will be the basis of their future learning</h4>
+				</section>
+
+				<section>
+					<h4 class="fragment">They will be someone's colleague in the future</h4>
+				</section>
 
 				<section>
 					<h3 class="fragment">They don't know any C++</h3>
-					<h3 class="fragment">They need to learn enough to be productive</h3>
+					<h4 class="fragment">They need to learn enough to be productive</h4>
 				</section>
 
 				<section>
-					<h3 class="fragment">We can try to draw some lines in the sand</h3>
-					<h3 class="fragment">Define a subset of C++</h3>
-					<h3 class="fragment">Needs to be complete-ish</h3>
+					<h4 class="fragment">We can try to draw some lines in the sand, and define</h4>
+					<h3 class="fragment">a Minimal Viable Subset of C++</h3>
 				</section>
 
 				<section>
-					<h2 class="fragment">How though?</h2>
+					<h3 class="fragment">How though?</h3>
 				</section>
 
                 <section>
-                    <h2 class="fragment">Choosing a subset</h2>
-                    <p class="fragment">To select such a subset we have to have some criteria.</p>
+                    <h3 class="fragment">To select such a subset we have to have some criteria.</h3>
 				</section>
 
 				<section>
 					<h2 class="fragment">Criteria</h2>
-					<p class="fragment">Has to be <strong>useful</strong>, a person should be able to write programs in C++ with it</p>
-					<p class="fragment">Should be <strong>mostly harmless</strong>, sharp edges should be avoided if possible</p>
-					<p class="fragment">Address the <strong>obvious</strong>, but keep it simple</p>
+					<p class="fragment">Should be <em>mostly harmless</em>, sharp edges should be avoided if possible</p>
+					<p class="fragment">Has to be <em>useful</em>, a person should be able to write programs in C++ with it</p>
+					<p class="fragment">Be relevant to <em>their level</em> currently</p>
 				</section>
 
 				<section>
-					<h2 class="fragment">No magic, no secrets</h2>
-					<p class="fragment">Sharp edges in plain sight need to be explained</p>
-					<p class="fragment">Tooling to find bugs early have to be introduced from the beginning</p>
-					<p class="fragment">What you teach has to be understood, minimize handwavy explanations</p>
+					<h4 class="fragment">Like all programming languages C++ has a culture</h4>
 				</section>
 
 				<section>
-					<h2></h2>
-					<p class="fragment">Like all programming languages C++ has a culture</p>
-					<p class="fragment">But there is no definite list of what C++'s sharp edges are</p>
-					<p class="fragment">We could try to suss out a sense of what the community feels</p>
+					<h4 class="fragment">But there is</h4>
+					<h3 class="fragment">no definite list</h3>
+					<h4 class="fragment">of what C++'s sharp edges are</h4>
 				</section>
 
 				<section>
-					<h2>How can we sort C++ features after these rather vague criteria?</h2>
-					<p class="fragment">Harmlessness</p>
-					<p class="fragment">Utility</p>
-					<p class="fragment">Level</p>
+					<h4 class="fragment">We could try to suss out a sense of what the community feels</h4>
 				</section>
 
 				<section>
-					<h2>Harmlessness</h2>
-					<div class="fragment not-lava-cirlce">
+					<h4 class="fragment">And of course we do this in the traditional way</h4>
+					<h3 class="fragment">using Twitter Polls</h3>
+				</section>
+
+				<section>
+					<h4 class="fragment">So the data in this talk is massaged data</h4>
+					<h3 class="fragment">from Twitter Polls</h3>
+					<h4 class="fragment">for science</h4>
+				</section>
+
+				<section>
+					<h2>Lava (Harmlessness)</h2>
+					<div class="flex-container">
+					<div class="fragment not-lava-cirlce" style="width: 280px; height: 100px;">
 						<p>Not Lava</p>
 					</div>
-					<div class="fragment leads-to-lava-cirlce">
+					<div class="fragment leads-to-lava-cirlce" style="width: 280px; height: 100px;">
 						<p>Leads to Lava</p>
 					</div>
-					<div class="fragment lava-cirlce">
+					<div class="fragment lava-cirlce" style="width: 280px; height: 100px;">
 						<p>Lava</p>
+					</div>
 					</div>
 				</section>
 
+				<section data-auto-animate data-auto-animate-easing="cubic-bezier(0.770, 0.000, 0.175, 1.000)">
+					<h3 class="fragment">Yes, let's figure out what is Lava</h3>
+					<div class="fragment" id="floor_is_lava_empty4"></div>
+					<script>
+						d3.csv("lava.csv", function (data) {
+
+							data = data.filter(function (d) {
+								return d.value > 0;
+							})
+
+							bubble_graph(data,"#floor_is_lava_empty4", true, "center", "center")
+						})
+					</script>
+				</section>
+
 				<section>
-					<h2>Utility</h2>
+					<h3 class="fragment">but also how useful something is</h3>
 					<div class="necessary fragment">
 						<p>Necessary</p>
 					</div>
@@ -517,7 +539,7 @@
 				</section>
 
 				<section>
-					<h2>Level</h2>
+					<h3 class="fragment">and at what level this is expected</h3>
 					<div class="flex-container">
 						<div class="beginner fragment">
 							<p>BEGINNER</p>
@@ -531,10 +553,12 @@
 					</div>
 				</section>
 
+				<section>
+					<h4 class="fragment">This gives us 3 axis on which to classify</h4>
+				</section>
+
 				<section data-auto-animate data-auto-animate-easing="cubic-bezier(0.770, 0.000, 0.175, 1.000)">
-					<script src="plugin/d3/d3.v4.js"></script>
-					<script src="plugin/d3/d3-scale-chromatic.v1.min.js"></script>
-					<h3>Take some C++ features</h3>
+					<h3>So we can take some C++ features</h3>
 					<div id="floor_is_lava_empty"></div>
 					<script>
 						d3.csv("lava.csv", function (data) {
@@ -549,7 +573,7 @@
 				</section>
 
 				<section data-auto-animate data-auto-animate-easing="cubic-bezier(0.770, 0.000, 0.175, 1.000)">
-					<h3>Use color for harmlessness</h3>
+					<h3>Use color for Lava</h3>
 					<div id="floor_is_lava_sorted"></div>
 
 					<script>
@@ -738,7 +762,7 @@
 				</section>
 
 				<section data-auto-animate data-auto-animate-easing="cubic-bezier(0.770, 0.000, 0.175, 1.000)">
-					<h3>Group by level</h3>
+					<h3>And group by level</h3>
 					<div id="floor_is_lava_spread_by_level_beginner"></div>
 
 					<script>
@@ -752,6 +776,7 @@
 						})
 					</script>
 				</section>
+
 					<section data-auto-animate data-auto-animate-easing="cubic-bezier(0.770, 0.000, 0.175, 1.000)">
 						<h3>What is beginner?</h3>
 						<div id="floor_is_lava_beginner"></div>
@@ -763,7 +788,7 @@
 									return d.level == "BEGINNER";
 								})
 
-								bubble_graph(data,"#floor_is_lava_beginner", true, "level", "center")
+								bubble_graph(data,"#floor_is_lava_beginner", true, "level", "utility")
 							})
 						</script>
 					</section>
@@ -821,7 +846,7 @@
 									return d.level == "INTERMEDIATE";
 								})
 
-								bubble_graph(data,"#floor_is_lava_intermediate", true, "level", "center")
+								bubble_graph(data,"#floor_is_lava_intermediate", true, "level", "utility")
 							})
 						</script>
 					</section>
@@ -880,7 +905,7 @@
 									return d.level == "ADVANCED";
 								})
 
-								bubble_graph(data,"#floor_is_lava_advanced", true, "level", "center")
+								bubble_graph(data,"#floor_is_lava_advanced", true, "level", "utility")
 							})
 						</script>
 					</section>
@@ -1013,6 +1038,13 @@
                         return index % 2 == 0 ? State::Scatter : State::Chase;
                     }
 					</script></code></pre>
+				</section>
+
+				<section>
+					<h2 class="fragment">No magic, no secrets</h2>
+					<p class="fragment">Sharp edges in plain sight need to be explained</p>
+					<p class="fragment">Tooling to find bugs early have to be introduced from the beginning</p>
+					<p class="fragment">What you teach has to be understood, minimize handwavy explanations</p>
 				</section>
 
 				<section>
