@@ -25,7 +25,7 @@
 		<script>
 			const width = 960
 			const height = 400
-			const bubble_size = 8;
+			const bubble_size = width / 100;
 
 			const color = d3.scaleOrdinal()
 					.domain(["Lava", "Leads to Lava", "Not Lava"])
@@ -43,7 +43,7 @@
 						'#009688'
 					]);
 
-			var bubble_graph = function (data,id_tag,use_color,halign,valign,use_wat) {
+			var bubble_graph = function (data,id_tag,use_color,halign,valign,use_wat, bubble_zoom) {
 				var svg_empty = d3.select(id_tag)
 						.append("svg")
 						.attr("width", width)
@@ -60,7 +60,7 @@
 							return d.key
 						})
 						.attr("rx", function (d) {
-							return use_wat ? wat_size(d.wat) : bubble_size
+							return (use_wat ? wat_size(d.wat) : bubble_size) * bubble_zoom
 						})
 						.attr("cx", width / 2)
 						.attr("cy", height / 2)
@@ -97,7 +97,7 @@
 						}))
 						.force("charge", d3.forceManyBody().strength(.1))
 						.force('collide', d3.forceCollide().strength(1).radius(function (d) {
-							return use_wat ? wat_size(d.wat) : bubble_size;
+							return (use_wat ? wat_size(d.wat) : bubble_size) * bubble_zoom;
 						}).iterations(1))
 
 				simulation
@@ -386,14 +386,15 @@
 								return d.value > 0;
 							})
 
-							bubble_graph(data,"#floor_is_lava_empty2", false, "center", "center", false)
+							const bubble_zoom = 1;
+							bubble_graph(data,"#floor_is_lava_empty2", false, "center", "center", false, bubble_zoom)
 						})
 					</script>
 				</section>
 
 				<section data-auto-animate data-auto-animate-easing="cubic-bezier(0.770, 0.000, 0.175, 1.000)">
-					<h3 class="fragment">We could try to classify them</h3>
-					<div class="fragment" id="floor_is_lava_empty3"></div>
+					<h3>We could try to classify them</h3>
+					<div id="floor_is_lava_empty3"></div>
 					<script>
 						d3.csv("lava.csv", function (data) {
 
@@ -401,7 +402,8 @@
 								return d.value > 0;
 							})
 
-							bubble_graph(data,"#floor_is_lava_empty3", true, "center", "center", false)
+							const bubble_zoom = 1;
+							bubble_graph(data,"#floor_is_lava_empty3", true, "center", "center", false, bubble_zoom)
 						})
 					</script>
 				</section>
@@ -487,7 +489,8 @@
 				</section>
 
 				<section>
-					<h4 class="fragment">We could try to suss out a sense of what the community feels...</h4>
+					<h4 class="fragment">We could try to suss out</h4>
+					<h4 class="fragment">a sense of what the community feels...</h4>
 				</section>
 
 				<section>
@@ -531,7 +534,8 @@
 								return d.value > 0;
 							})
 
-							bubble_graph(data,"#floor_is_lava_empty4", true, "center", "center", false)
+							const bubble_zoom = 1;
+							bubble_graph(data,"#floor_is_lava_empty4", true, "center", "center", false, bubble_zoom)
 						})
 					</script>
 				</section>
@@ -610,7 +614,8 @@
 								return d.value > 0;
 							})
 
-							bubble_graph(data,"#floor_is_lava_empty", false, "center", "center", false)
+							const bubble_zoom = 1;
+							bubble_graph(data,"#floor_is_lava_empty", false, "center", "center", false, bubble_zoom)
 						})
 					</script>
 				</section>
@@ -815,7 +820,8 @@
 								return d.value > 0;
 							})
 
-							bubble_graph(data,"#floor_is_lava_spread_by_level_beginner", true, "level", "utility", false)
+							const bubble_zoom = 1;
+							bubble_graph(data,"#floor_is_lava_spread_by_level_beginner", true, "level", "utility", false, bubble_zoom)
 						})
 					</script>
 				</section>
@@ -831,7 +837,8 @@
 									return d.level == "BEGINNER";
 								})
 
-								bubble_graph(data,"#floor_is_lava_beginner", true, "level", "utility", false)
+								const bubble_zoom = 1;
+								bubble_graph(data,"#floor_is_lava_beginner", true, "level", "utility", false, bubble_zoom)
 							})
 						</script>
 						<p class="fragment">
@@ -877,7 +884,8 @@
 									return d.value > 0;
 								})
 
-								bubble_graph(data,"#floor_is_lava_spread_by_level_intermediate", true, "level", "utility", false)
+								const bubble_zoom = 1;
+								bubble_graph(data,"#floor_is_lava_spread_by_level_intermediate", true, "level", "utility", false, bubble_zoom)
 							})
 						</script>
 					</section>
@@ -893,7 +901,8 @@
 									return d.level == "INTERMEDIATE";
 								})
 
-								bubble_graph(data,"#floor_is_lava_intermediate", true, "level", "utility", false)
+								const bubble_zoom = 1;
+								bubble_graph(data,"#floor_is_lava_intermediate", true, "level", "utility", false, bubble_zoom)
 							})
 						</script>
 						<p class="fragment">
@@ -940,7 +949,8 @@
 									return d.value > 0;
 								})
 
-								bubble_graph(data,"#floor_is_lava_spread_by_level_advanced", true, "level", "utility", false)
+								const bubble_zoom = 1;
+								bubble_graph(data,"#floor_is_lava_spread_by_level_advanced", true, "level", "utility", false, bubble_zoom)
 							})
 						</script>
 					</section>
@@ -957,7 +967,8 @@
 									return d.level == "ADVANCED";
 								})
 
-								bubble_graph(data,"#floor_is_lava_advanced", true, "level", "utility", false)
+								const bubble_zoom = 1;
+								bubble_graph(data,"#floor_is_lava_advanced", true, "level", "utility", false, bubble_zoom)
 							})
 						</script>
 						<p class="fragment">
@@ -1002,7 +1013,8 @@
 								return d.value > 0;
 							})
 
-							bubble_graph(data,"#floor_is_lava_wat", false, "center", "center", true)
+							const bubble_zoom = 1;
+							bubble_graph(data,"#floor_is_lava_wat", false, "center", "center", true, bubble_zoom)
 						})
 					</script>
 				</section>
@@ -1017,7 +1029,8 @@
 								return d.wat > 50.0;
 							})
 
-							bubble_graph(data,"#floor_is_lava_wat2", false, "center", "center", true)
+							const bubble_zoom = 1;
+							bubble_graph(data,"#floor_is_lava_wat2", false, "center", "center", true, bubble_zoom)
 						})
 					</script>
 					<p class="fragment">
@@ -1036,7 +1049,8 @@
 								return d.value > 0;
 							})
 
-							bubble_graph(data,"#floor_is_lava_wat3", false, "center", "center", true)
+							const bubble_zoom = 1;
+							bubble_graph(data,"#floor_is_lava_wat3", false, "center", "center", true, bubble_zoom)
 						})
 					</script>
 				</section>
@@ -1050,11 +1064,39 @@
 							data = data.filter(function (d) {
 								return d.wat < 5.0;
 							})
-
-							bubble_graph(data,"#floor_is_lava_wat4", false, "center", "center", true)
+							const bubble_zoom = 10;
+							bubble_graph(data,"#floor_is_lava_wat4", false, "center", "center", true, bubble_zoom)
 						})
 					</script>
 					<p class="fragment">
+						<em>Debuggers</em>,
+						<em>Overloading</em>,
+						<em>Undefined Behavior</em>,
+						<em>Manual memory management</em>,
+						<em>C</em>,
+						<em>#define</em>,
+						<em>Globals</em>,
+						<em>struct</em>,
+						<em>namespaces</em>,
+						<em>Pointer arithmetic</em> and
+						<em>bitwise operations</em>
+					</p>
+				</section>
+
+				<section data-auto-animate data-auto-animate-easing="cubic-bezier(0.770, 0.000, 0.175, 1.000)">
+					<h4>What was the least Wat?</h4>
+					<div id="floor_is_lava_wat5"></div>
+					<script>
+						d3.csv("lava.csv", function (data) {
+
+							data = data.filter(function (d) {
+								return d.wat < 5.0;
+							})
+							const bubble_zoom = 10;
+							bubble_graph(data,"#floor_is_lava_wat5", true, "center", "center", true, bubble_zoom)
+						})
+					</script>
+					<p>
 						<em>Debuggers</em>,
 						<em>Overloading</em>,
 						<em>Undefined Behavior</em>,
@@ -1156,7 +1198,8 @@
 								return d.level == "BEGINNER" && d.utility === "NECESSARY";
 							})
 
-							bubble_graph(data,"#floor_is_lava_beginner2", true, "level", "utility", false)
+							const bubble_zoom = 1;
+							bubble_graph(data,"#floor_is_lava_beginner2", true, "level", "utility", false, bubble_zoom)
 						})
 					</script>
 				</section>
