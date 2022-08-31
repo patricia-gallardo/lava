@@ -428,3 +428,27 @@ section.has-light-background, section.has-light-background h1, section.has-light
   border-color: #999999;
   border-width: 2px;
 }
+
+.not-lava-cirlce {
+  background-color: #4caf50;
+  border: solid;
+  border-color: #009688;
+  border-width: 2px;
+  border-radius: 50%;
+}
+
+.leads-to-lava-cirlce {
+  background-color: #ffc107;
+  border: solid;
+  border-color: #ff9800;
+  border-width: 2px;
+  border-radius: 50%;
+}
+
+.lava-cirlce {
+  background-color: #f44336;
+  border: solid;
+  border-color: #e91e63;
+  border-width: 2px;
+  border-radius: 50%;
+}
