@@ -398,7 +398,7 @@ section.has-light-background, section.has-light-background h1, section.has-light
 }
 
 .necessary {
-  background-color: #ffffff;
+  background-color: #b3cde066;
   border-radius: 5px;
   border: solid;
   border-color: #999999;
@@ -406,7 +406,7 @@ section.has-light-background, section.has-light-background h1, section.has-light
 }
 
 .useful {
-  background-color: #ffffff;
+  background-color: #6497b166;
   border-radius: 5px;
   border: solid;
   border-color: #999999;
@@ -414,7 +414,7 @@ section.has-light-background, section.has-light-background h1, section.has-light
 }
 
 .well-rounded {
-  background-color: #ffffff;
+  background-color: #005b9666;
   border-radius: 5px;
   border: solid;
   border-color: #999999;
@@ -422,7 +422,7 @@ section.has-light-background, section.has-light-background h1, section.has-light
 }
 
 .specialized {
-  background-color: #ffffff;
+  background-color: #03396c66;
   border-radius: 5px;
   border: solid;
   border-color: #999999;
@@ -454,31 +454,31 @@ section.has-light-background, section.has-light-background h1, section.has-light
 }
 
 .beginner {
-  background-color: #ffffff;
+  background-color: #FBEC5D44;
   border-radius: 5px;
   border: solid;
   border-color: #999999;
   border-width: 2px;
   width: 300px;
-  height: 300px;
+  height: 460px;
 }
 
 .intermediate {
-  background-color: #ffffff;
+  background-color: #FFDB5844;
   border-radius: 5px;
   border: solid;
   border-color: #999999;
   border-width: 2px;
   width: 300px;
-  height: 300px;
+  height: 460px;
 }
 
 .advanced {
-  background-color: #ffffff;
+  background-color: #F4BB4444;
   border-radius: 5px;
   border: solid;
   border-color: #999999;
   border-width: 2px;
   width: 300px;
-  height: 300px;
+  height: 460px;
 }
