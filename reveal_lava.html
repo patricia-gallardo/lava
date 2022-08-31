@@ -458,7 +458,7 @@
 								var cells = container.selectAll('p')
 										.data(data)
 										.enter()
-										.append('p')
+										.append('div')
 										.attr('class', 'flex-item fragment')
 										.style("background-color", function (d) {
 											return color(d.region)

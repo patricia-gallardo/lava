@@ -392,4 +392,7 @@ section.has-light-background, section.has-light-background h1, section.has-light
 
   /* Then we define how is distributed the remaining space */
   justify-content: space-around;
+
+  row-gap: 5px;
+  column-gap: 5px;
 }
