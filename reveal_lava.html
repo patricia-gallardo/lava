@@ -1136,10 +1136,40 @@
 				</section>
 
 				<section>
-					<h2 class="fragment">No magic, no secrets</h2>
-					<p class="fragment">Sharp edges in plain sight need to be explained</p>
-					<p class="fragment">Tooling to find bugs early have to be introduced from the beginning</p>
-					<p class="fragment">What you teach has to be understood, minimize handwavy explanations</p>
+					<h3 class="fragment">What does it mean?</h3>
+				</section>
+
+				<section>
+					<h3 class="fragment">There seems to be an area</h3>
+					<h4 class="fragment">that we feel is appropriate for beginners</h4>
+					<h4 class="fragment">that is mostly <em>Not Lava</em></h4>
+				</section>
+
+				<section data-auto-animate data-auto-animate-easing="cubic-bezier(0.770, 0.000, 0.175, 1.000)">
+					<h3>What is beginner?</h3>
+					<div id="floor_is_lava_beginner2"></div>
+
+					<script>
+						d3.csv("lava.csv", function (data) {
+
+							data = data.filter(function (d) {
+								return d.level == "BEGINNER" && d.utility === "NECESSARY";
+							})
+
+							bubble_graph(data,"#floor_is_lava_beginner2", true, "level", "utility", false)
+						})
+					</script>
+				</section>
+				<section data-auto-animate data-auto-animate-easing="cubic-bezier(0.770, 0.000, 0.175, 1.000)">
+					<h3>What is beginner?</h3>
+					<div id="floor_is_lava_beginner_necessary2" class="necessary"></div>
+
+					<script>
+						d3.csv("lava.csv", function (data) {
+							data = data.filter(function (d) { return d.level === "BEGINNER" && d.utility === "NECESSARY"; })
+							tabulate(data,"#floor_is_lava_beginner_necessary2")
+						})
+					</script>
 				</section>
 
 				<section id="transitions" data-visibility="hidden">
