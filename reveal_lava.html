@@ -17,6 +17,7 @@
 		<link rel="stylesheet" href="dist/reset.css">
 		<link rel="stylesheet" href="dist/reveal.css">
 		<link rel="stylesheet" href="dist/theme/turtle.css" id="theme">
+		<link rel="stylesheet" href="hana.css" id="theme">
 
 		<!-- Theme used for syntax highlighting of code -->
 		<link rel="stylesheet" href="plugin/highlight/monokai.css">
@@ -537,6 +538,103 @@
 					<h3>Take some C++ features</h3>
 					<div id="floor_is_lava_empty"></div>
 					<script>
+<<<<<<< HEAD
+=======
+						const width = 960
+						const height = 540
+						const horizontal_width = width / 2
+						const vertical_height = height / 2
+
+						const bubble_size = 15;
+
+						var bubble_graph = function (data,id_tag,use_color,halign,valign) {
+							var svg_empty = d3.select(id_tag)
+									.append("svg")
+									.attr("width", width)
+									.attr("height", height)
+
+							const g = svg_empty.append("g")
+									.selectAll("ellipse")
+									.data(data)
+									.enter();
+
+							const node = g.append("ellipse")
+									.attr("class", "node")
+									.attr("data-id", function (d) {
+										return d.key
+									})
+									.attr("rx", bubble_size)
+									.attr("cx", width / 2)
+									.attr("cy", height / 2)
+									.style("fill", function (d) {
+										return use_color ? color(d.region) : "white"
+									})
+									.style("fill-opacity", 0.8)
+									.attr("stroke", function (d) {
+										return use_color ? border_color(d.region) : "grey"
+									})
+									.style("stroke-width", 1)
+									.call(d3.drag()
+											.on("start", dragstarted)
+											.on("drag", dragged)
+											.on("end", dragended));
+
+							var lvl_sort = [];
+							lvl_sort["BEGINNER"] = (width / 4);
+							lvl_sort["INTERMEDIATE"] = (width / 4) * 2;
+							lvl_sort["ADVANCED"] = (width / 4) * 3;
+
+							var util_sort = [];
+							util_sort["NECESSARY"] = (height / 5);
+							util_sort["USEFUL"] = (height / 5) * 2;
+							util_sort["WELL_ROUNDED"] = (height / 5) * 3;
+							util_sort["SPECIALIZED"] = (height / 5) * 4;
+
+							const simulation = d3.forceSimulation()
+									.force('x', d3.forceX().x(function (d) {
+										return halign === "center" ? width / 2 : lvl_sort[d.level];
+									}))
+									.force('y', d3.forceY().y(function (d) {
+										return valign === "center" ? height / 2 : util_sort[d.utility];
+									}))
+									.force("charge", d3.forceManyBody().strength(.1))
+									.force('collide', d3.forceCollide().strength(1).radius(function (d) {
+										return bubble_size;
+									}).iterations(1))
+
+							simulation
+									.nodes(data)
+									.on("tick", function (d) {
+										node
+												.attr("cx", function (d) {
+													return d.x;
+												})
+												.attr("cy", function (d) {
+													return d.y;
+												});
+									});
+
+							function dragstarted(d) {
+								if (!d3.event.active) simulation.alphaTarget(.03).restart();
+								d.fx = d.x;
+								d.fy = d.y;
+							}
+
+							function dragged(d) {
+								d.fx = d3.event.x;
+								d.fy = d3.event.y;
+							}
+
+							function dragended(d) {
+								if (!d3.event.active) simulation.alphaTarget(.03);
+								d.fx = null;
+								d.fy = null;
+							}
+
+							return svg_empty;
+						}
+
+>>>>>>> hana-center
 						d3.csv("lava.csv", function (data) {
 
 							data = data.filter(function (d) {
