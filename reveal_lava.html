@@ -389,6 +389,29 @@
 							return svg;
 						}
 
+						var tabulate = function (data,id_tag) {
+							var container = d3.select(id_tag).append('div').attr('class', 'flex-container')
+
+							var cells = container.selectAll('p')
+									.data(data)
+									.enter()
+									.append('div')
+									.attr('class', 'flex-item fragment')
+									.style("background-color", function (d) {
+										return color(d.region)
+									})
+									.style("border", "solid")
+									.style("border-color", function (d) {
+										return border_color(d.region)
+									})
+									.style("border-width", "2px")
+									.style("border-radius", "5px")
+									.style("padding", "5px")
+									.text(function (d) { return d.key })
+
+							return container;
+						}
+
 						d3.csv("lava.csv", function (data) {
 
 							data = data.filter(function (d) {
@@ -625,30 +648,6 @@
 						<div id="floor_is_lava_beginner_rect"></div>
 
 						<script>
-
-							var tabulate = function (data,id_tag) {
-								var container = d3.select(id_tag).append('div').attr('class', 'flex-container')
-
-								var cells = container.selectAll('p')
-										.data(data)
-										.enter()
-										.append('div')
-										.attr('class', 'flex-item fragment')
-										.style("background-color", function (d) {
-											return color(d.region)
-										})
-										.style("border", "solid")
-										.style("border-color", function (d) {
-											return border_color(d.region)
-										})
-										.style("border-width", "2px")
-										.style("border-radius", "5px")
-										.style("padding", "5px")
-										.text(function (d) { return d.key })
-
-								return container;
-							}
-
 							d3.csv("lava.csv", function (data) {
 
 								data = data.filter(function (d) {
