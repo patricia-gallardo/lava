@@ -452,3 +452,33 @@ section.has-light-background, section.has-light-background h1, section.has-light
   border-width: 2px;
   border-radius: 50%;
 }
+
+.beginner {
+  background-color: #ffffff;
+  border-radius: 5px;
+  border: solid;
+  border-color: #999999;
+  border-width: 2px;
+  width: 300px;
+  height: 300px;
+}
+
+.intermediate {
+  background-color: #ffffff;
+  border-radius: 5px;
+  border: solid;
+  border-color: #999999;
+  border-width: 2px;
+  width: 300px;
+  height: 300px;
+}
+
+.advanced {
+  background-color: #ffffff;
+  border-radius: 5px;
+  border: solid;
+  border-color: #999999;
+  border-width: 2px;
+  width: 300px;
+  height: 300px;
+}
