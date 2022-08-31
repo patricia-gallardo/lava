@@ -20,6 +20,317 @@
 
 		<!-- Theme used for syntax highlighting of code -->
 		<link rel="stylesheet" href="plugin/highlight/monokai.css">
+		<script src="plugin/d3/d3.v4.js"></script>
+		<script src="plugin/d3/d3-scale-chromatic.v1.min.js"></script>
+		<script>
+			const width = 1280 / 2
+			const height = 720 / 2
+			const bubble_size = 8;
+
+			const color = d3.scaleOrdinal()
+					.domain(["Lava", "Leads to Lava", "Not Lava"])
+					.range([
+						'#f44336',
+						'#ffc107',
+						'#4caf50',
+					]);
+
+			const border_color = d3.scaleOrdinal()
+					.domain(["Lava", "Leads to Lava", "Not Lava"])
+					.range([
+						'#e91e63',
+						'#ff9800',
+						'#009688'
+					]);
+
+			var bubble_graph = function (data,id_tag,use_color,halign,valign) {
+				var svg_empty = d3.select(id_tag)
+						.append("svg")
+						.attr("width", width)
+						.attr("height", height)
+
+				const g = svg_empty.append("g")
+						.selectAll("ellipse")
+						.data(data)
+						.enter();
+
+				const node = g.append("ellipse")
+						.attr("class", "node")
+						.attr("data-id", function (d) {
+							return d.key
+						})
+						.attr("rx", bubble_size)
+						.attr("cx", width / 2)
+						.attr("cy", height / 2)
+						.style("fill", function (d) {
+							return use_color ? color(d.region) : "white"
+						})
+						.style("fill-opacity", 0.8)
+						.attr("stroke", function (d) {
+							return use_color ? border_color(d.region) : "grey"
+						})
+						.style("stroke-width", 1)
+						.call(d3.drag()
+								.on("start", dragstarted)
+								.on("drag", dragged)
+								.on("end", dragended));
+
+				var lvl_sort = [];
+				lvl_sort["BEGINNER"] = (width / 4);
+				lvl_sort["INTERMEDIATE"] = (width / 4) * 2;
+				lvl_sort["ADVANCED"] = (width / 4) * 3;
+
+				var util_sort = [];
+				util_sort["NECESSARY"] = (height / 5);
+				util_sort["USEFUL"] = (height / 5) * 2;
+				util_sort["WELL_ROUNDED"] = (height / 5) * 3;
+				util_sort["SPECIALIZED"] = (height / 5) * 4;
+
+				const simulation = d3.forceSimulation()
+						.force('x', d3.forceX().x(function (d) {
+							return halign === "center" ? width / 2 : lvl_sort[d.level];
+						}))
+						.force('y', d3.forceY().y(function (d) {
+							return valign === "center" ? height / 2 : util_sort[d.utility];
+						}))
+						.force("charge", d3.forceManyBody().strength(.1))
+						.force('collide', d3.forceCollide().strength(1).radius(function (d) {
+							return bubble_size;
+						}).iterations(1))
+
+				simulation
+						.nodes(data)
+						.on("tick", function (d) {
+							node
+									.attr("cx", function (d) {
+										return d.x;
+									})
+									.attr("cy", function (d) {
+										return d.y;
+									});
+						});
+
+				function dragstarted(d) {
+					if (!d3.event.active) simulation.alphaTarget(.03).restart();
+					d.fx = d.x;
+					d.fy = d.y;
+				}
+
+				function dragged(d) {
+					d.fx = d3.event.x;
+					d.fy = d3.event.y;
+				}
+
+				function dragended(d) {
+					if (!d3.event.active) simulation.alphaTarget(.03);
+					d.fx = null;
+					d.fy = null;
+				}
+
+				return svg_empty;
+			}
+
+			var atlas = function (data,id_tag) {
+
+				const COL1 = -8;
+				const COL2 = -6;
+				const COL3 = -4;
+				const COL4 = -2;
+				const COL5 = 0;
+				const COL6 = 2;
+				const COL7 = 4;
+				const COL8 = 6;
+				const COL9 = 8;
+
+				const xCenter = {
+					UB: COL2,
+					BUILD: COL9,
+					C: COL1,
+					CPP: COL5,
+					MACRO: COL2,
+					MMM: COL1,
+					OOP: COL5,
+					OUT: COL3,
+					CASTS: COL3,
+					STL: COL8,
+					THR: COL8,
+					TMP: COL8,
+					TOOLS: COL9,
+					PTR: COL1,
+					PASS: COL3,
+					CTP: COL7,
+					SMART: COL7,
+					CONTAIN: COL7
+				};
+
+				const ROW1 = -5;
+				const ROW2 = 0;
+				const ROW3 = 5;
+
+				const yCenter = {
+					UB: ROW2,
+					BUILD: ROW3,
+					C: ROW1,
+					CPP: ROW1,
+					CASTS: ROW2,
+					MACRO: ROW1,
+					MMM: ROW3,
+					OOP: ROW3,
+					OUT: ROW1,
+					STL: ROW2,
+					THR: ROW3,
+					TMP: ROW1,
+					TOOLS: ROW2,
+					PTR: ROW2,
+					PASS: ROW3,
+					CTP: ROW1,
+					SMART: ROW2,
+					CONTAIN: ROW3
+				};
+
+				const xLevelCenter = {
+					BEGINNER: (width / 6),
+					INTERMEDIATE: (width / 6) * 3,
+					ADVANCED: (width / 6) * 5,
+				}
+
+				const size = d3.scaleLinear()
+						.domain([40, 100])
+						.range([1, (width / 30)])
+
+				const stroke_width = d3.scaleLinear()
+						.domain([0, 100])
+						.range([1, (width / 80)])
+
+				var svg = d3.select(id_tag)
+						.append("svg")
+						.attr("width", width)
+						.attr("height", height)
+
+				const g = svg.append("g")
+						.selectAll("ellipse")
+						.data(data)
+						.enter();
+
+				const node = g.append("ellipse")
+						.attr("class", "node")
+						.attr("data-id", function (d) {
+							return d.key
+						})
+						.attr("rx", function (d) {
+							return size(d.value)
+						})
+						.attr("cx", width / 2)
+						.attr("cy", height / 2)
+						.style("fill", function (d) {
+							return color(d.region)
+						})
+						.style("fill-opacity", 0.8)
+						.attr("stroke", function (d) {
+							return border_color(d.region)
+						})
+						.style("stroke-width", function (d) {
+							return stroke_width(d.wat)
+						})
+						.call(d3.drag()
+								.on("start", dragstarted)
+								.on("drag", dragged)
+								.on("end", dragended));
+
+				const node_label = g.append("text")
+						.text(function (d) {
+							return d.category;
+						})
+						.attr("data-id", function (d) {
+							return "label"+d.key
+						})
+						.attr('text-anchor', "middle")
+						.attr('pointer-events', "none")
+						.attr('font-family', "monospace")
+						.attr('font-size', function (d) {
+							return size(d.value) * 0.5;
+						});
+
+				const level_simulation = false;
+
+				const simulation = d3.forceSimulation()
+						.force('x', d3.forceX().x(function (d) {
+							return level_simulation ?
+									xLevelCenter[d.level] + (xCenter[d.category] * (width / 130)) :
+									width / 2 + (xCenter[d.category] * (width / 20));
+						}))
+						.force('y', d3.forceY().y(function (d) {
+							return level_simulation ?
+									height / 2 + (yCenter[d.category] * (width / 40)) :
+									height / 2 + (yCenter[d.category] * (width / 40));
+						}))
+						.force("charge", d3.forceManyBody().strength(.1))
+						.force('collide', d3.forceCollide().strength(1).radius(function (d) {
+							return ((stroke_width(d.wat) / 2) + size(d.value));
+						}).iterations(1))
+
+				simulation
+						.nodes(data)
+						.on("tick", function (d) {
+							node
+									.attr("cx", function (d) {
+										return d.x;
+									})
+									.attr("cy", function (d) {
+										return d.y;
+									});
+							node_label
+									.attr("x", function (d) {
+										return d.x;
+									})
+									.attr("y", function (d) {
+										return d.y + 3;
+									});
+						});
+
+				function dragstarted(d) {
+					if (!d3.event.active) simulation.alphaTarget(.03).restart();
+					d.fx = d.x;
+					d.fy = d.y;
+				}
+
+				function dragged(d) {
+					d.fx = d3.event.x;
+					d.fy = d3.event.y;
+				}
+
+				function dragended(d) {
+					if (!d3.event.active) simulation.alphaTarget(.03);
+					d.fx = null;
+					d.fy = null;
+				}
+
+				return svg;
+			}
+
+			var tabulate = function (data,id_tag) {
+				var container = d3.select(id_tag).append('div').attr('class', 'flex-container')
+
+				var cells = container.selectAll('p')
+						.data(data)
+						.enter()
+						.append('div')
+						.attr('class', 'flex-item fragment')
+						.style("background-color", function (d) {
+							return color(d.region)
+						})
+						.style("border", "solid")
+						.style("border-color", function (d) {
+							return border_color(d.region)
+						})
+						.style("border-width", "2px")
+						.style("border-radius", "5px")
+						.style("padding", "5px")
+						.text(function (d) { return d.key })
+
+				return container;
+			}
+		</script>
 	</head>
 
 	<body>
@@ -30,32 +341,133 @@
 			<div class="slides">
                 <section>
                     <h2 class="r-fit-text">The Floor is Lava</h2>
-                    <h2>Trying to teach C++</h2>
-                    <h3>Patricia Aas, NDC TechTown 2022</h3>
+					<h3 class="fragment">Patricia Aas</h3>
+					<h4 class="fragment">NDC TechTown 2022</h4>
                 </section>
 
-                <section>
-                    <h2>C++ is vast</h2>
-                    <p class="fragment">
-                        Teaching an introduction to C++ requires us to select a subset of the language that will be the starting
-                        point for the rest of their learning.
-                    </p>
-                </section>
+				<section>
+					<h2 class="fragment">Trying to teach C++</h2>
+					<h3 class="fragment">with Corentin Jabot</h3>
+					<p class="fragment">Mod(C++) Fundamentals</p>
+					<p class="fragment">Mod(C++) Intermediate</p>
+				</section>
+
+				<section>
+					<p class="fragment">Working with Corentin</p>
+				</section>
+
+				<section>
+					<p class="fragment">Slett Alt</p>
+					<p class="fragment">Delete everything</p>
+				</section>
+
+				<section>
+					<p class="fragment">Back to teaching C++</p>
+				</section>
+
+				<section>
+					<h4 class="fragment">How do you teach a programming language</h4>
+					<h4 class="fragment">when the Floor is Lava?</h4>
+				</section>
+
+				<section data-auto-animate data-auto-animate-easing="cubic-bezier(0.770, 0.000, 0.175, 1.000)">
+					<h3 class="fragment">Do we even know what is Lava?</h3>
+					<div class="fragment" id="floor_is_lava_empty2"></div>
+					<script>
+						d3.csv("lava.csv", function (data) {
+
+							data = data.filter(function (d) {
+								return d.value > 0;
+							})
+
+							bubble_graph(data,"#floor_is_lava_empty2", false, "center", "center")
+						})
+					</script>
+				</section>
+
+				<section data-auto-animate data-auto-animate-easing="cubic-bezier(0.770, 0.000, 0.175, 1.000)">
+					<h3 class="fragment">We could try to classify them</h3>
+					<div class="fragment" id="floor_is_lava_empty3"></div>
+					<script>
+						d3.csv("lava.csv", function (data) {
+
+							data = data.filter(function (d) {
+								return d.value > 0;
+							})
+
+							bubble_graph(data,"#floor_is_lava_empty3", true, "center", "center")
+						})
+					</script>
+				</section>
+
+				<section>
+					<h4 class="fragment">Have we really gotten much further?</h4>
+				</section>
+
+				<section>
+					<h4 class="fragment">Maybe the Lava is just a pool of anti-patterns?</h4>
+					<h3 class="fragment">Stuff You Shouldn't Do</h3>
+					<h4 class="fragment">And we can just skip it?</h4>
+				</section>
+
+				<section>
+					<h4 class="fragment">Maybe it's only for</h4>
+					<h3 class="fragment">advanced specialized</h3>
+					<h4 class="fragment">use-cases?</h4>
+				</section>
+
+				<section>
+					<h4 class="fragment">Who knows what std::launder does anyway?</h4>
+					<h4 class="fragment">Or what Subsumption is?</h4>
+					<h4 class="fragment">Who needs to know?</h4>
+				</section>
+
+				<section>
+					<h4 class="fragment">Maybe there is a</h4>
+					<h3 class="fragment">"modern" subset of C++</h3>
+					<h4 class="fragment">that is "safe"?</h4>
+				</section>
 
                 <section>
-                    <h2>Choosing a subset</h2>
+                    <h2 class="fragment">C++ is vast</h2>
+				</section>
+
+				<section>
+					<h3 class="fragment">
+						Teaching an introduction to C++ requires us to select a subset of the language that will be the
+						starting point for the rest of their learning.
+					</h3>
+                </section>
+
+				<section>
+					<h3 class="fragment">They don't know any C++</h3>
+					<h3 class="fragment">They need to learn enough to be productive</h3>
+				</section>
+
+				<section>
+					<h3 class="fragment">We can try to draw some lines in the sand</h3>
+					<h3 class="fragment">Define a subset of C++</h3>
+					<h3 class="fragment">Needs to be complete-ish</h3>
+				</section>
+
+				<section>
+					<h2 class="fragment">How though?</h2>
+				</section>
+
+                <section>
+                    <h2 class="fragment">Choosing a subset</h2>
                     <p class="fragment">To select such a subset we have to have some criteria.</p>
 				</section>
 
 				<section>
-					<h2>Criteria</h2>
+					<h2 class="fragment">Criteria</h2>
 					<p class="fragment">Has to be <strong>useful</strong>, a person should be able to write programs in C++ with it</p>
 					<p class="fragment">Should be <strong>mostly harmless</strong>, sharp edges should be avoided if possible</p>
 					<p class="fragment">Address the <strong>obvious</strong>, but keep it simple</p>
 				</section>
 
 				<section>
-					<h2>No magic, no secrets</h2>
+					<h2 class="fragment">No magic, no secrets</h2>
 					<p class="fragment">Sharp edges in plain sight need to be explained</p>
 					<p class="fragment">Tooling to find bugs early have to be introduced from the beginning</p>
 					<p class="fragment">What you teach has to be understood, minimize handwavy explanations</p>
@@ -124,316 +536,7 @@
 					<script src="plugin/d3/d3-scale-chromatic.v1.min.js"></script>
 					<h3>Take some C++ features</h3>
 					<div id="floor_is_lava_empty"></div>
-
 					<script>
-						const width = 1280 / 2
-						const height = 720 / 2
-						const bubble_size = 8;
-
-						const color = d3.scaleOrdinal()
-								.domain(["Lava", "Leads to Lava", "Not Lava"])
-								.range([
-									'#f44336',
-									'#ffc107',
-									'#4caf50',
-								]);
-
-						const border_color = d3.scaleOrdinal()
-								.domain(["Lava", "Leads to Lava", "Not Lava"])
-								.range([
-									'#e91e63',
-									'#ff9800',
-									'#009688'
-								]);
-
-						var bubble_graph = function (data,id_tag,use_color,halign,valign) {
-							var svg_empty = d3.select(id_tag)
-									.append("svg")
-									.attr("width", width)
-									.attr("height", height)
-
-							const g = svg_empty.append("g")
-									.selectAll("ellipse")
-									.data(data)
-									.enter();
-
-							const node = g.append("ellipse")
-									.attr("class", "node")
-									.attr("data-id", function (d) {
-										return d.key
-									})
-									.attr("rx", bubble_size)
-									.attr("cx", width / 2)
-									.attr("cy", height / 2)
-									.style("fill", function (d) {
-										return use_color ? color(d.region) : "white"
-									})
-									.style("fill-opacity", 0.8)
-									.attr("stroke", function (d) {
-										return use_color ? border_color(d.region) : "grey"
-									})
-									.style("stroke-width", 1)
-									.call(d3.drag()
-											.on("start", dragstarted)
-											.on("drag", dragged)
-											.on("end", dragended));
-
-							var lvl_sort = [];
-							lvl_sort["BEGINNER"] = (width / 4);
-							lvl_sort["INTERMEDIATE"] = (width / 4) * 2;
-							lvl_sort["ADVANCED"] = (width / 4) * 3;
-
-							var util_sort = [];
-							util_sort["NECESSARY"] = (height / 5);
-							util_sort["USEFUL"] = (height / 5) * 2;
-							util_sort["WELL_ROUNDED"] = (height / 5) * 3;
-							util_sort["SPECIALIZED"] = (height / 5) * 4;
-
-							const simulation = d3.forceSimulation()
-									.force('x', d3.forceX().x(function (d) {
-										return halign === "center" ? width / 2 : lvl_sort[d.level];
-									}))
-									.force('y', d3.forceY().y(function (d) {
-										return valign === "center" ? height / 2 : util_sort[d.utility];
-									}))
-									.force("charge", d3.forceManyBody().strength(.1))
-									.force('collide', d3.forceCollide().strength(1).radius(function (d) {
-										return bubble_size;
-									}).iterations(1))
-
-							simulation
-									.nodes(data)
-									.on("tick", function (d) {
-										node
-												.attr("cx", function (d) {
-													return d.x;
-												})
-												.attr("cy", function (d) {
-													return d.y;
-												});
-									});
-
-							function dragstarted(d) {
-								if (!d3.event.active) simulation.alphaTarget(.03).restart();
-								d.fx = d.x;
-								d.fy = d.y;
-							}
-
-							function dragged(d) {
-								d.fx = d3.event.x;
-								d.fy = d3.event.y;
-							}
-
-							function dragended(d) {
-								if (!d3.event.active) simulation.alphaTarget(.03);
-								d.fx = null;
-								d.fy = null;
-							}
-
-							return svg_empty;
-						}
-
-						var atlas = function (data,id_tag) {
-
-							const COL1 = -8;
-							const COL2 = -6;
-							const COL3 = -4;
-							const COL4 = -2;
-							const COL5 = 0;
-							const COL6 = 2;
-							const COL7 = 4;
-							const COL8 = 6;
-							const COL9 = 8;
-
-							const xCenter = {
-								UB: COL2,
-								BUILD: COL9,
-								C: COL1,
-								CPP: COL5,
-								MACRO: COL2,
-								MMM: COL1,
-								OOP: COL5,
-								OUT: COL3,
-								CASTS: COL3,
-								STL: COL8,
-								THR: COL8,
-								TMP: COL8,
-								TOOLS: COL9,
-								PTR: COL1,
-								PASS: COL3,
-								CTP: COL7,
-								SMART: COL7,
-								CONTAIN: COL7
-							};
-
-							const ROW1 = -5;
-							const ROW2 = 0;
-							const ROW3 = 5;
-
-							const yCenter = {
-								UB: ROW2,
-								BUILD: ROW3,
-								C: ROW1,
-								CPP: ROW1,
-								CASTS: ROW2,
-								MACRO: ROW1,
-								MMM: ROW3,
-								OOP: ROW3,
-								OUT: ROW1,
-								STL: ROW2,
-								THR: ROW3,
-								TMP: ROW1,
-								TOOLS: ROW2,
-								PTR: ROW2,
-								PASS: ROW3,
-								CTP: ROW1,
-								SMART: ROW2,
-								CONTAIN: ROW3
-							};
-
-							const xLevelCenter = {
-								BEGINNER: (width / 6),
-								INTERMEDIATE: (width / 6) * 3,
-								ADVANCED: (width / 6) * 5,
-							}
-
-							const size = d3.scaleLinear()
-									.domain([40, 100])
-									.range([1, (width / 30)])
-
-							const stroke_width = d3.scaleLinear()
-									.domain([0, 100])
-									.range([1, (width / 80)])
-
-							var svg = d3.select(id_tag)
-									.append("svg")
-									.attr("width", width)
-									.attr("height", height)
-
-							const g = svg.append("g")
-									.selectAll("ellipse")
-									.data(data)
-									.enter();
-
-							const node = g.append("ellipse")
-									.attr("class", "node")
-									.attr("data-id", function (d) {
-										return d.key
-									})
-									.attr("rx", function (d) {
-										return size(d.value)
-									})
-									.attr("cx", width / 2)
-									.attr("cy", height / 2)
-									.style("fill", function (d) {
-										return color(d.region)
-									})
-									.style("fill-opacity", 0.8)
-									.attr("stroke", function (d) {
-										return border_color(d.region)
-									})
-									.style("stroke-width", function (d) {
-										return stroke_width(d.wat)
-									})
-									.call(d3.drag()
-											.on("start", dragstarted)
-											.on("drag", dragged)
-											.on("end", dragended));
-
-							const node_label = g.append("text")
-									.text(function (d) {
-										return d.category;
-									})
-									.attr("data-id", function (d) {
-										return "label"+d.key
-									})
-									.attr('text-anchor', "middle")
-									.attr('pointer-events', "none")
-									.attr('font-family', "monospace")
-									.attr('font-size', function (d) {
-										return size(d.value) * 0.5;
-									});
-
-							const level_simulation = false;
-
-							const simulation = d3.forceSimulation()
-									.force('x', d3.forceX().x(function (d) {
-										return level_simulation ?
-												xLevelCenter[d.level] + (xCenter[d.category] * (width / 130)) :
-												width / 2 + (xCenter[d.category] * (width / 20));
-									}))
-									.force('y', d3.forceY().y(function (d) {
-										return level_simulation ?
-												height / 2 + (yCenter[d.category] * (width / 40)) :
-												height / 2 + (yCenter[d.category] * (width / 40));
-									}))
-									.force("charge", d3.forceManyBody().strength(.1))
-									.force('collide', d3.forceCollide().strength(1).radius(function (d) {
-										return ((stroke_width(d.wat) / 2) + size(d.value));
-									}).iterations(1))
-
-							simulation
-									.nodes(data)
-									.on("tick", function (d) {
-										node
-												.attr("cx", function (d) {
-													return d.x;
-												})
-												.attr("cy", function (d) {
-													return d.y;
-												});
-										node_label
-												.attr("x", function (d) {
-													return d.x;
-												})
-												.attr("y", function (d) {
-													return d.y + 3;
-												});
-									});
-
-							function dragstarted(d) {
-								if (!d3.event.active) simulation.alphaTarget(.03).restart();
-								d.fx = d.x;
-								d.fy = d.y;
-							}
-
-							function dragged(d) {
-								d.fx = d3.event.x;
-								d.fy = d3.event.y;
-							}
-
-							function dragended(d) {
-								if (!d3.event.active) simulation.alphaTarget(.03);
-								d.fx = null;
-								d.fy = null;
-							}
-
-							return svg;
-						}
-
-						var tabulate = function (data,id_tag) {
-							var container = d3.select(id_tag).append('div').attr('class', 'flex-container')
-
-							var cells = container.selectAll('p')
-									.data(data)
-									.enter()
-									.append('div')
-									.attr('class', 'flex-item fragment')
-									.style("background-color", function (d) {
-										return color(d.region)
-									})
-									.style("border", "solid")
-									.style("border-color", function (d) {
-										return border_color(d.region)
-									})
-									.style("border-width", "2px")
-									.style("border-radius", "5px")
-									.style("padding", "5px")
-									.text(function (d) { return d.key })
-
-							return container;
-						}
-
 						d3.csv("lava.csv", function (data) {
 
 							data = data.filter(function (d) {
@@ -442,7 +545,6 @@
 
 							bubble_graph(data,"#floor_is_lava_empty", false, "center", "center")
 						})
-
 					</script>
 				</section>
 
