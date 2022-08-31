@@ -111,6 +111,22 @@
 
 						const bubble_size = 15;
 
+						const color = d3.scaleOrdinal()
+								.domain(["Lava", "Leads to Lava", "Not Lava"])
+								.range([
+									'#f44336',
+									'#ffc107',
+									'#4caf50',
+								]);
+
+						const border_color = d3.scaleOrdinal()
+								.domain(["Lava", "Leads to Lava", "Not Lava"])
+								.range([
+									'#e91e63',
+									'#ff9800',
+									'#009688'
+								]);
+
 						var bubble_graph = function (data,id_tag,use_color,halign,valign) {
 							var svg_empty = d3.select(id_tag)
 									.append("svg")
@@ -215,22 +231,6 @@
 					<div id="floor_is_lava_sorted"></div>
 
 					<script>
-						const color = d3.scaleOrdinal()
-								.domain(["Lava", "Leads to Lava", "Not Lava"])
-								.range([
-									'#f44336',
-									'#ffc107',
-									'#4caf50',
-								]);
-
-						const border_color = d3.scaleOrdinal()
-								.domain(["Lava", "Leads to Lava", "Not Lava"])
-								.range([
-									'#e91e63',
-									'#ff9800',
-									'#009688'
-								]);
-
 						var svg_sorted = d3.select("#floor_is_lava_sorted")
 								.append("svg")
 								.attr("width", width)
@@ -460,6 +460,16 @@
 										.enter()
 										.append('p')
 										.attr('class', 'flex-item fragment')
+										.style("background-color", function (d) {
+											return color(d.region)
+										})
+										.style("border", "solid")
+										.style("border-color", function (d) {
+											return border_color(d.region)
+										})
+										.style("border-width", "2px")
+										.style("border-radius", "5px")
+										.style("padding", "5px")
 										.text(function (d) { return d.key })
 
 								return container;
