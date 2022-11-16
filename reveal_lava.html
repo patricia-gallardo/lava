@@ -144,23 +144,44 @@
 
 			const xCenter = {
 				UB: COL2,
-				BUILD: COL9,
+				BUILD: COL7,
 				C: COL1,
 				CPP: COL5,
 				MACRO: COL2,
 				MMM: COL1,
-				OOP: COL5,
+				OOP: COL7,
 				OUT: COL3,
 				CASTS: COL3,
-				STL: COL8,
-				THR: COL8,
+				STL: COL9,
+				THR: COL5,
 				TMP: COL8,
 				TOOLS: COL9,
 				PTR: COL1,
-				PASS: COL3,
+				PASS: COL5,
 				CTP: COL7,
-				SMART: COL7,
-				CONTAIN: COL7
+				SMART: COL3,
+				CONTAIN: COL8
+			};
+
+			const category_names = {
+				UB: "UB",
+				BUILD: "Build",
+				C: "C",
+				CPP: "C++",
+				MACRO: "Macros",
+				MMM: "Man Mem Mgmt",
+				OOP: "OOP",
+				OUT: "Console",
+				CASTS: "Casts",
+				STL: "STL",
+				THR: "Threads",
+				TMP: "Tmp",
+				TOOLS: "Tools",
+				PTR: "Pointers",
+				PASS: "Parameters",
+				CTP: "Comp-time Pr",
+				SMART: "Smart Ptr",
+				CONTAIN: "Containers"
 			};
 
 			const ROW1 = -5;
@@ -175,17 +196,17 @@
 				CASTS: ROW2,
 				MACRO: ROW1,
 				MMM: ROW3,
-				OOP: ROW3,
+				OOP: ROW2,
 				OUT: ROW1,
-				STL: ROW2,
+				STL: ROW1,
 				THR: ROW3,
 				TMP: ROW1,
-				TOOLS: ROW2,
+				TOOLS: ROW3,
 				PTR: ROW2,
-				PASS: ROW3,
+				PASS: ROW2,
 				CTP: ROW1,
-				SMART: ROW2,
-				CONTAIN: ROW3
+				SMART: ROW3,
+				CONTAIN: ROW2
 			};
 
 			const xLevelCenter = {
@@ -206,7 +227,7 @@
 					.domain([0, 100])
 					.range([1, (width / 80)])
 
-			var atlas = function (data,id_tag) {
+			var atlas = function (data,id_tag,outline) {
 
 				var svg = d3.select(id_tag)
 						.append("svg")
@@ -224,19 +245,19 @@
 							return d.key
 						})
 						.attr("rx", function (d) {
-							return size(d.value)
+							return outline ? 70 : size(d.value)
 						})
 						.attr("cx", width / 2)
 						.attr("cy", height / 2)
 						.style("fill", function (d) {
-							return color(d.region)
+							return outline ? "white" : color(d.region)
 						})
 						.style("fill-opacity", 0.8)
 						.attr("stroke", function (d) {
-							return border_color(d.region)
+							return outline ? "black" : border_color(d.region)
 						})
 						.style("stroke-width", function (d) {
-							return stroke_width(d.wat)
+							return outline ? 1 : stroke_width(d.wat)
 						})
 						.call(d3.drag()
 								.on("start", dragstarted)
@@ -245,7 +266,7 @@
 
 				const node_label = g.append("text")
 						.text(function (d) {
-							return d.category;
+							return outline? category_names[d.category] : d.category;
 						})
 						.attr("data-id", function (d) {
 							return "label"+d.key
@@ -254,7 +275,7 @@
 						.attr('pointer-events', "none")
 						.attr('font-family', "monospace")
 						.attr('font-size', function (d) {
-							return size(d.value) * 0.5;
+							return outline ? 20 : size(d.value) * 0.5;
 						});
 
 				const level_simulation = false;
@@ -1109,6 +1130,22 @@
 				</section>
 
 				<section data-auto-animate data-auto-animate-easing="cubic-bezier(0.770, 0.000, 0.175, 1.000)">
+					<h3>Atlas orientation</h3>
+					<div id="atlas_map"></div>
+
+					<script>
+						d3.csv("lava.csv", function (data) {
+
+							data = data.filter(function (d) {
+								return d.example === "true"
+							})
+
+							atlas(data,"#atlas_map", true)
+						})
+					</script>
+				</section>
+
+				<section data-auto-animate data-auto-animate-easing="cubic-bezier(0.770, 0.000, 0.175, 1.000)">
 					<h3>Atlas for beginners</h3>
 					<div id="atlas_for_beginners"></div>
 
@@ -1119,7 +1156,7 @@
 								return d.level === "BEGINNER"
 							})
 
-							atlas(data,"#atlas_for_beginners")
+							atlas(data,"#atlas_for_beginners", false)
 						})
 					</script>
 				</section>
@@ -1136,7 +1173,7 @@
 								return d.value > 0
 							})
 
-							atlas(data,"#floor_is_lava3")
+							atlas(data,"#floor_is_lava3", false)
 						})
 					</script>
 				</section>
@@ -1152,7 +1189,7 @@
 									return d.level === "INTERMEDIATE"
 								})
 
-								atlas(data,"#atlas_for_intermediate")
+								atlas(data,"#atlas_for_intermediate", false)
 							})
 						</script>
 					</section>
@@ -1169,7 +1206,7 @@
 								return d.level === "ADVANCED"
 							})
 
-							atlas(data,"#atlas_for_advanced")
+							atlas(data,"#atlas_for_advanced", false)
 						})
 					</script>
 				</section>
@@ -1185,11 +1222,53 @@
 				</section>
 
 				<section>
-					<h3 class="fragment">The question remains, though, is it enough?</h3>
+					<h3 class="fragment">The question remains</h3>
+					<h2 class="fragment">is it enough?</h2>
+				</section>
+
+				<section>
+					<div>
+						<div class="flex-container" style="position: absolute;">
+							<div class="beginner fragment">
+								<p>BEGINNER</p>
+							</div>
+						</div>
+						<div style="position: absolute; width: 304px; height: 600px; margin-top: 80px;">
+							<div class="necessary fragment">
+								<p>Necessary</p>
+							</div>
+							<div class="useful fragment">
+								<p>Useful</p>
+							</div>
+							<div class="well-rounded fragment">
+								<p>Well-rounded</p>
+							</div>
+							<div class="specialized fragment">
+								<p>Specialized</p>
+							</div>
+						</div>
+					</div>
 				</section>
 
 				<section data-auto-animate data-auto-animate-easing="cubic-bezier(0.770, 0.000, 0.175, 1.000)">
 					<h3>What is beginner?</h3>
+					<div id="floor_is_lava_only_beginner"></div>
+
+					<script>
+						d3.csv("lava.csv", function (data) {
+
+							data = data.filter(function (d) {
+								return d.level === "BEGINNER";
+							})
+
+							const bubble_zoom = 1;
+							bubble_graph(data,"#floor_is_lava_only_beginner", true, "level", "utility", false, bubble_zoom)
+						})
+					</script>
+				</section>
+
+				<section data-auto-animate data-auto-animate-easing="cubic-bezier(0.770, 0.000, 0.175, 1.000)">
+					<h3>What is beginner and necessary?</h3>
 					<div id="floor_is_lava_beginner2"></div>
 
 					<script>
@@ -1205,7 +1284,7 @@
 					</script>
 				</section>
 				<section data-auto-animate data-auto-animate-easing="cubic-bezier(0.770, 0.000, 0.175, 1.000)">
-					<h3>What is beginner?</h3>
+					<h4>What is beginner and necessary?</h4>
 					<div id="floor_is_lava_beginner_necessary2" class="necessary"></div>
 
 					<script>
