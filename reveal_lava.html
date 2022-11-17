@@ -38,9 +38,16 @@
 			const border_color = d3.scaleOrdinal()
 					.domain(["Lava", "Leads to Lava", "Not Lava"])
 					.range([
-						'#e91e63',
-						'#ff9800',
-						'#009688'
+						'#00000044',
+						'#00000044',
+						'#00000044'
+					]);
+			const text_color = d3.scaleOrdinal()
+					.domain(["Lava", "Leads to Lava", "Not Lava"])
+					.range([
+						'white',
+						'black',
+						'white'
 					]);
 
 			var bubble_graph = function (data,id_tag,use_color,halign,valign,use_wat, bubble_zoom) {
@@ -352,6 +359,10 @@
 						})
 						.style("border-width", "2px")
 						.style("border-radius", "5px")
+						.style("color", function (d) {
+							return text_color(d.region)
+						})
+						.style("font-weight", "300")
 						.style("padding", "5px")
 						.text(function (d) { return d.key })
 
