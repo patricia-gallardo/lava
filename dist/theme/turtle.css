@@ -403,6 +403,10 @@ section.has-light-background, section.has-light-background h1, section.has-light
   border: solid;
   border-color: #999999;
   border-width: 2px;
+	margin-bottom: 5px;
+	margin-left: 8px;
+	margin-right: 8px;
+	padding: 5px;
 }
 
 .useful {
@@ -411,6 +415,10 @@ section.has-light-background, section.has-light-background h1, section.has-light
   border: solid;
   border-color: #999999;
   border-width: 2px;
+	margin-bottom: 5px;
+	margin-left: 8px;
+	margin-right: 8px;
+	padding: 5px;
 }
 
 .well-rounded {
@@ -419,6 +427,10 @@ section.has-light-background, section.has-light-background h1, section.has-light
   border: solid;
   border-color: #999999;
   border-width: 2px;
+	margin-bottom: 5px;
+	margin-left: 8px;
+	margin-right: 8px;
+	padding: 5px;
 }
 
 .specialized {
@@ -427,6 +439,10 @@ section.has-light-background, section.has-light-background h1, section.has-light
   border: solid;
   border-color: #999999;
   border-width: 2px;
+	margin-bottom: 5px;
+	margin-left: 8px;
+	margin-right: 8px;
+	padding: 5px;
 }
 
 .not-lava-cirlce {
@@ -461,6 +477,7 @@ section.has-light-background, section.has-light-background h1, section.has-light
   border-width: 2px;
   width: 300px;
   height: 460px;
+	padding-bottom: 66px;
 }
 
 .intermediate {
@@ -471,6 +488,7 @@ section.has-light-background, section.has-light-background h1, section.has-light
   border-width: 2px;
   width: 300px;
   height: 460px;
+	padding-bottom: 66px;
 }
 
 .advanced {
@@ -481,6 +499,7 @@ section.has-light-background, section.has-light-background h1, section.has-light
   border-width: 2px;
   width: 300px;
   height: 460px;
+	padding-bottom: 66px;
 }
 
 .reveal section div svg {
